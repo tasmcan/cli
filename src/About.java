@@ -19,8 +19,6 @@ public class About extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-    
-    //this is a test
 	public About() {
 		setTitle("About");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
