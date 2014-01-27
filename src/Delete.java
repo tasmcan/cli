@@ -38,7 +38,7 @@ public class Delete extends JFrame {
 	JTextArea product;
 	JButton btnFind;
 
-	int id;
+	public int id;
 
 	/**
 	 * Create the frame.
@@ -66,8 +66,10 @@ public class Delete extends JFrame {
 		btnFind = new JButton("Find");
 		btnFind.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 				String sql = "select c.name, p.p_code, i.notes, i.sn, i.id from inventory i, product p, category c where c.id = p.c_id AND p.id=i.p_id AND i.sn LIKE '%"+ textField.getText() +"%' AND i.availability = 1";
-				//System.out.println(sql);
+				
+				
 				try {
 					
 					ResultSet rs = mainframe.login.stmt.executeQuery(sql);
