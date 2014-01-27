@@ -153,7 +153,7 @@ public class MainFrame extends JFrame {
 				String today = date.toString();
 				switch(comboBox.getSelectedIndex()){
 				case 0: //show default display table
-					sql = "select * from (select i.id, c.name AS Category, p.p_code AS Product, p.description AS Description, count(i.p_id) AS Total, sum(case when i.availability = 1 then 1 else 0 end) AS Lab, sum(case when i.availability = 0 then 1 else 0 end) as Demo  from inventory i, product p, category c where c.id = p.c_id AND p.id = i.p_id group by i.p_id) temp order by temp.Category";
+					sql = "select * from (select c.name AS Category, p.p_code AS Product, p.description AS Description, count(i.p_id) AS Total, sum(case when i.availability = 1 then 1 else 0 end) AS Lab, sum(case when i.availability = 0 then 1 else 0 end) as Demo  from inventory i, product p, category c where c.id = p.c_id AND p.id = i.p_id group by i.p_id) temp order by temp.Category";
 					excelSql = sql;
 					
 					excelFile = "general_lab_inventory_" + today + ".xls";
@@ -204,7 +204,7 @@ public class MainFrame extends JFrame {
 				if(filterField.getText().compareTo("")==0)
 					comboBox.setSelectedIndex(0);
 				else{
-					String sql = "select i.id, c.name, p.p_code, i.sn, i.availability from inventory i, product p, category c " +
+					String sql = "select i.id, c.name, p.p_code, i.sn, i.availability from inventory i, product p, category c, location l" +
 								"where c.id = p.c_id AND p.id=i.p_id AND ((p.description LIKE '%"+ filter +"%') OR (p.p_code LIKE '%"+ filter +"%')"
 									+ " OR (i.notes LIKE '%"+ filter +"%') OR (i.sn LIKE '%"+ filter +"%') OR (c.name LIKE '%"+ filter +"%') )";
 				
@@ -247,59 +247,91 @@ public class MainFrame extends JFrame {
 		table.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e)
 			{
-				popup = new JPopupMenu();
-				JMenuItem menuItem = null;
+				int selectedId;
+				String selectedPID;
 				
+				popup = new JPopupMenu();
+				JMenuItem addMenu = new JMenuItem("Add New");
+				JMenuItem deleteMenu = new JMenuItem("Delete");
+				JMenuItem editMenu = new JMenuItem("Edit");
+				JMenuItem sendMenu = new JMenuItem("Send Demo");
+				JMenuItem receiveMenu = new JMenuItem("Receive Demo");
+				JMenuItem addToDemoMenu = new JMenuItem("Add to Demo Cart");
+				
+				addMenu.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						System.out.println(((JMenuItem)e.getSource()).getText().toString());
+					}
+				});
+				
+				deleteMenu.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						System.out.println(((JMenuItem)e.getSource()).getText().toString());
+					}
+				});
+				
+				editMenu.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						System.out.println(((JMenuItem)e.getSource()).getText().toString());
+					}
+				});
+				
+				sendMenu.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						System.out.println(((JMenuItem)e.getSource()).getText().toString());
+					}
+				});
+				
+				receiveMenu.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						System.out.println(((JMenuItem)e.getSource()).getText().toString());
+					}
+				});
+				
+				addToDemoMenu.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						System.out.println(((JMenuItem)e.getSource()).getText().toString());
+					}
+				});
 				
 				switch(comboBox.getSelectedIndex()){
 				case 0: //show default display table
-					
-			        menuItem = new JMenuItem("Delete");
-			        popup.add(menuItem);
-			        menuItem = new JMenuItem("Edit");
-			        popup.add(menuItem);
-			        menuItem = new JMenuItem("Send Demo");
-			        popup.add(menuItem);
-			        menuItem = new JMenuItem("Add to Demo Cart");
-			        popup.add(menuItem);
+					popup.add(addMenu);
+					popup.add(deleteMenu);
+					popup.add(editMenu);
+					popup.add(sendMenu);
+					popup.add(addToDemoMenu);
 					break;
 				case 1: //show at lab
-					menuItem = new JMenuItem("Delete");
-			        popup.add(menuItem);
-			        menuItem = new JMenuItem("Edit");
-			        popup.add(menuItem);
-			        menuItem = new JMenuItem("Send Demo");
-			        popup.add(menuItem);
-			        menuItem = new JMenuItem("Add to Demo Cart");
-			        popup.add(menuItem);
+					popup.add(addMenu);
+			        popup.add(deleteMenu);
+			        popup.add(editMenu);
+			        popup.add(sendMenu);
+			        popup.add(addToDemoMenu);
 					break;
 				case 2: //show items at demo
-					menuItem = new JMenuItem("Receive Demo");
-			        popup.add(menuItem);
-			        menuItem = new JMenuItem("Delete");
-			        popup.add(menuItem);
-			        menuItem = new JMenuItem("Edit");
-			        popup.add(menuItem);
+			        popup.add(receiveMenu);
+			        popup.add(deleteMenu);
+			        popup.add(editMenu);
 					break;
 				case 3: //show expired demo items
-					menuItem = new JMenuItem("Receive Demo");
-			        popup.add(menuItem);
-					menuItem = new JMenuItem("Delete");
-			        popup.add(menuItem);
-			        menuItem = new JMenuItem("Edit");
-			        popup.add(menuItem);
+			        popup.add(receiveMenu);
+			        popup.add(deleteMenu);
+			        popup.add(editMenu);
 					break;
 				case 4: //show full inventory
-					menuItem = new JMenuItem("Delete");
-			        popup.add(menuItem);
-			        menuItem = new JMenuItem("Edit");
-			        popup.add(menuItem);
-			        menuItem = new JMenuItem("Send Demo");
-			        popup.add(menuItem);
-			        menuItem = new JMenuItem("Receive Demo");
-			        popup.add(menuItem);
-			        menuItem = new JMenuItem("Add to Demo Cart");
-			        popup.add(menuItem);
+					popup.add(addMenu);
+			        popup.add(deleteMenu);
+			        popup.add(editMenu);
+			        popup.add(sendMenu);
+			        popup.add(receiveMenu);
+			        popup.add(addToDemoMenu);
 					break;
 				}
 		        
@@ -319,19 +351,16 @@ public class MainFrame extends JFrame {
 					// variable for the beginning and end selects only that one row.
 					model.setSelectionInterval( rowNumber, rowNumber );
 					
-					int id = (int) table.getModel().getValueAt(rowNumber, 0);
-					System.out.println(""+ id);
-
+					if(comboBox.getSelectedIndex() == 0){
+						selectedPID = (String) table.getModel().getValueAt(rowNumber, 1);
+						System.out.println(""+ selectedPID);
+					}else{
+						selectedId = (int) table.getModel().getValueAt(rowNumber, 0);
+						System.out.println(""+ selectedId);
+					}
 					popup.show(e.getComponent(),
                             e.getX(), e.getY());
 				}
-				
-				/*menuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						System.out.println(((JMenuItem)e.getSource()).getText());
-					}
-				});*/
 			}
 		});
 	}
