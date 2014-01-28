@@ -30,19 +30,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class Start extends JFrame {
-<<<<<<< HEAD
+
 
 	public static final String SQLServer = "10.62.36.151";
 	public static final String SQLUser = "root";
 	public static final String SQLPwd = "Password1";
 
-=======
-	
-	public static final String SQLServer= "10.62.36.151";
-	public static final String SQLUser = "root";
-	public static final String SQLPwd = "Password1";
-	
->>>>>>> f17c0c615a042be8c1f8f6fbd13637cac08e04fa
 	private JPanel contentPane;
 	JFrame dialog;
 
