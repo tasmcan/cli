@@ -60,14 +60,14 @@ public class MainFrame extends JFrame {
 		setTitle("Demo Lab Inventory System Software");
 		login = l;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 708, 425);
+		setBounds(100, 100, 840, 469);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 708, 30);
+		menuBar.setBounds(0, 0, 834, 30);
 		contentPane.add(menuBar);
 		
 		JButton btnAddNew = new JButton("Add item");
@@ -132,10 +132,12 @@ public class MainFrame extends JFrame {
 		});
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 64, 692, 330);
+		scrollPane.setBounds(10, 64, 824, 377);
 		contentPane.add(scrollPane);
 		
 		table = new JTable(dtm);
+		table.setFillsViewportHeight(true);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		table.setBorder(new EmptyBorder(1, 1, 1, 1));
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		scrollPane.setViewportView(table);
@@ -151,6 +153,10 @@ public class MainFrame extends JFrame {
 				
 				Date date = new Date();
 				String today = date.toString();
+				
+				filterField.setToolTipText("Press enter to filter/search.");
+				filterField.setText("");
+				
 				switch(comboBox.getSelectedIndex()){
 				case 0: //show default display table
 					sql = "select * from (select c.name AS Category, p.p_code AS Product, p.description AS Description, count(i.p_id) AS Total, sum(case when i.availability = 1 then 1 else 0 end) AS Lab, sum(case when i.availability = 0 then 1 else 0 end) as Demo  from inventory i, product p, category c where c.id = p.c_id AND p.id = i.p_id group by i.p_id) temp order by temp.Category";
@@ -193,7 +199,7 @@ public class MainFrame extends JFrame {
 		contentPane.add(comboBox);
 		
 		JLabel lblSearch = new JLabel("Filter:");
-		lblSearch.setBounds(491, 36, 47, 24);
+		lblSearch.setBounds(613, 36, 47, 24);
 		contentPane.add(lblSearch);
 		
 		filterField = new JTextField();
@@ -204,8 +210,8 @@ public class MainFrame extends JFrame {
 				if(filterField.getText().compareTo("")==0)
 					comboBox.setSelectedIndex(0);
 				else{
-					String sql = "select i.id, c.name, p.p_code, i.sn, i.availability from inventory i, product p, category c, location l" +
-								"where c.id = p.c_id AND p.id=i.p_id AND ((p.description LIKE '%"+ filter +"%') OR (p.p_code LIKE '%"+ filter +"%')"
+					String sql = "select i.id, c.name, p.p_code, i.sn, l.loc_code, i.availability from inventory i, product p, category c, location l " +
+								"where c.id = p.c_id AND p.id=i.p_id AND (i.location = l.id OR i.location is null) AND ((p.description LIKE '%"+ filter +"%') OR (p.p_code LIKE '%"+ filter +"%')"
 									+ " OR (i.notes LIKE '%"+ filter +"%') OR (i.sn LIKE '%"+ filter +"%') OR (c.name LIKE '%"+ filter +"%') )";
 				
 					Start.showTable(sql, dtm);
@@ -220,7 +226,7 @@ public class MainFrame extends JFrame {
 		});
 
 		filterField.setText("Press enter to filter");
-		filterField.setBounds(540, 36, 162, 24);
+		filterField.setBounds(672, 36, 162, 24);
 		contentPane.add(filterField);
 		filterField.setColumns(10);
 		
@@ -241,7 +247,7 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
-		btnToExcel.setBounds(275, 35, 117, 29);
+		btnToExcel.setBounds(262, 36, 117, 24);
 		contentPane.add(btnToExcel);
 		
 		table.addMouseListener(new MouseAdapter() {
@@ -336,8 +342,7 @@ public class MainFrame extends JFrame {
 				}
 		        
 				// Right mouse click
-				if (e.isPopupTrigger())
-				{   
+				if (e.isPopupTrigger()){   
 					// get the coordinates of the mouse click
 					Point p = e.getPoint();
 		 
@@ -351,9 +356,9 @@ public class MainFrame extends JFrame {
 					// variable for the beginning and end selects only that one row.
 					model.setSelectionInterval( rowNumber, rowNumber );
 					
-					if(comboBox.getSelectedIndex() == 0){
+					if (comboBox.getSelectedIndex() == 0 && filterField.getText().equals("")) {
 						selectedPID = (String) table.getModel().getValueAt(rowNumber, 1);
-						System.out.println(""+ selectedPID);
+						System.out.println("" + selectedPID);
 					}else{
 						selectedId = (int) table.getModel().getValueAt(rowNumber, 0);
 						System.out.println(""+ selectedId);

@@ -139,7 +139,7 @@ public class Add extends JFrame {
 								+ comboBox_1.getSelectedItem() + "%'";
 						rs = Start.stmt.executeQuery(sql);
 						if (rs.next()) {
-							int io_type = (int) rs.getObject(1);
+							int io_type = (Integer) rs.getObject(1);
 							Date utilDate = new Date();
 							java.sql.Date sqlDate = new java.sql.Date(utilDate
 									.getTime());

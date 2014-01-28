@@ -86,8 +86,8 @@ public class Edit extends JFrame {
 					product.setSelectedItem( (String) rs.getObject(1));
 					category.setSelectedItem( (String) rs.getObject(2));
 					location.setSelectedItem((String) rs.getObject(5));
-					
 					notes.setText((String) rs.getObject(3));
+					
 					id = (int) rs.getObject(6);
 					message.setText("Found! \n If you want to remove this item, click delete button.");
 				}else if(rowcount >1 && sn.getText().compareTo("") != 0){
