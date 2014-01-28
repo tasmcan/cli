@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="CiscoEnvanterSoftware">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/mysql-connector-java-5.1.24-bin.jar!/" />
+      <root url="jar://$PROJECT_DIR$/poi-3.9-20121203.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jcalendar-1.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

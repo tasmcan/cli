@@ -88,7 +88,7 @@ public class SendDemo extends JFrame {
 						description.setText((String) rs.getObject(3));
 						textField.setText((String) rs.getObject(4));
 						message.setText("Found! \n If you want to send this item to demo, click next button.");
-						inid = (int) rs.getObject(5);
+						inid = (Integer) rs.getObject(5);
 					}else if(rowcount >1 && textField.getText().compareTo("") != 0){
 						message.setText("More than one result!\nPlease be more specific.");
 					}else if(textField.getText().compareTo("") == 0){

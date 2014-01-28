@@ -360,7 +360,7 @@ public class MainFrame extends JFrame {
 						selectedPID = (String) table.getModel().getValueAt(rowNumber, 1);
 						System.out.println("" + selectedPID);
 					}else{
-						selectedId = (int) table.getModel().getValueAt(rowNumber, 0);
+						selectedId = (Integer) table.getModel().getValueAt(rowNumber, 0);
 						System.out.println(""+ selectedId);
 					}
 					popup.show(e.getComponent(),
