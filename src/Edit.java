@@ -80,7 +80,6 @@ public class Edit extends JFrame {
 						rs.beforeFirst();
 					}
 
-
 				if(rs.next() && rowcount == 1){
 					sn.setText((String) rs.getObject(4));
 					product.setSelectedItem( (String) rs.getObject(1));
@@ -125,6 +124,7 @@ public class Edit extends JFrame {
 		JButton btnFinish = new JButton("SAVE");
 		btnFinish.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 			}
 		});
 		btnFinish.setBounds(174, 250, 142, 44);
