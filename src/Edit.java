@@ -68,7 +68,7 @@ public class Edit extends JFrame {
 		JButton btnNewButton = new JButton("Find");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String sql = "select p.p_code, c.name, i.notes, i.sn, l.loc_code, i.id from inventory i, product p, category c, location l where c.id = p.c_id AND p.id=i.p_id AND i.location = l.id AND i.sn LIKE '%"+ sn.getText() +"%' AND i.availability = 1";
+				String sql = "select p.p_code, c.name, i.notes, i.sn, l.loc_code, i.id from inventory i, product p, category c, location l where c.id = p.c_id AND p.id=i.p_id AND i.location = l.id AND i.sn LIKE '%"+ sn.getText() +"%'";
 				ResultSet rs = mainframe.find(sql);
 				int id;
 				
@@ -169,10 +169,13 @@ public class Edit extends JFrame {
 		message.setBounds(10, 305, 329, 52);
 		contentPane.add(message);
 	}
-	public JComboBox getComboBox() {
+	public JComboBox getComboBoxProduct() {
 		return product;
 	}
-	public JComboBox getComboBox2() {
+	public JComboBox getComboBoxLocation() {
 		return location;
+	}
+	public JComboBox getComboBoxCategory() {
+		return category;
 	}
 }

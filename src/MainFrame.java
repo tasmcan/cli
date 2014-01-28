@@ -76,17 +76,18 @@ public class MainFrame extends JFrame {
 		JButton btnDelete = new JButton("Delete");
 		menuBar.add(btnDelete);
 		
-		/*JButton btnEdit = new JButton("Edit");
+		JButton btnEdit = new JButton("Edit");
 		btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				fillComboBox(edit.getComboBox(), getList("select * from product", 2));
-				fillComboBox(edit.getComboBox2(), getList("select * from location", 2));
+				fillComboBox(edit.getComboBoxProduct(), getList("select * from product", 2));
+				fillComboBox(edit.getComboBoxLocation(), getList("select * from location", 2));
+				fillComboBox(edit.getComboBoxCategory(),getList("select * from category", 2));
 				edit.setLocationRelativeTo(null);
 				edit.setVisible(true);
 				//edit.dbID = 0;
 			}
 		});
-		menuBar.add(btnEdit);*/
+		menuBar.add(btnEdit);
 		
 		JButton btnRent = new JButton("Send Demo");
 		menuBar.add(btnRent);
