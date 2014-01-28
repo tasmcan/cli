@@ -32,9 +32,9 @@ import java.io.IOException;
 
 public class Start extends JFrame {
 	
-	public static final String SQLServer= "localhost";
+	public static final String SQLServer= "10.62.36.151";
 	public static final String SQLUser = "root";
-	public static final String SQLPwd = "";
+	public static final String SQLPwd = "Password1";
 	
 	private JPanel contentPane;
 	JFrame dialog;

@@ -107,13 +107,13 @@ public class Add extends JFrame {
 							&& (sn.length() == 11 || chckbxNoSn.isSelected())) {
 
 						// insert into inventory table first.
-						int pid = (int) rs.getObject(1);
+						int pid = (Integer) rs.getObject(1);
 
 						rs = Start.stmt.executeQuery(sql_location);
 
 						int loc_id = 0;
 						if (rs.next()) {
-							loc_id = (int) rs.getObject(1);
+							loc_id = (Integer) rs.getObject(1);
 						}
 
 						sql = "insert into inventory (p_id, sn, notes, location) values ("
@@ -139,7 +139,7 @@ public class Add extends JFrame {
 								+ comboBox_1.getSelectedItem() + "%'";
 						rs = Start.stmt.executeQuery(sql);
 						if (rs.next()) {
-							int io_type = (int) rs.getObject(1);
+							int io_type = (Integer) rs.getObject(1);
 							Date utilDate = new Date();
 							java.sql.Date sqlDate = new java.sql.Date(utilDate
 									.getTime());

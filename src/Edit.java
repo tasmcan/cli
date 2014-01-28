@@ -88,7 +88,8 @@ public class Edit extends JFrame {
 					location.setSelectedItem((String) rs.getObject(5));
 					
 					notes.setText((String) rs.getObject(3));
-					id = (int) rs.getObject(6);
+					id = (Integer) rs.getObject(6);
+
 					message.setText("Found! \n If you want to remove this item, click delete button.");
 				}else if(rowcount >1 && sn.getText().compareTo("") != 0){
 					message.setText("More than one result!\nPlease be more specific.");

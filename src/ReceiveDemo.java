@@ -116,8 +116,8 @@ public class ReceiveDemo extends JFrame {
 						senddate.setText(((Date) rs.getObject(6)).toString());
 						expecteddate.setText(((Date) rs.getObject(7)).toString());
 						message.setText("Found! \n If this item is received, click RECEIVED button.");
-						inid = (int) rs.getObject(1);
-						mid = (int) rs.getObject(8);
+						inid = (Integer) rs.getObject(1);
+						mid = (Integer) rs.getObject(8);
 						notes.setText((String)rs.getObject(9));
 					}else if(rowcount >1){
 						message.setText("More than one result!\nPlease be more specific.");

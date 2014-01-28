@@ -85,7 +85,7 @@ public class Delete extends JFrame {
 						product.setText((String) rs.getObject(2));
 						description.setText((String) rs.getObject(3));
 						textField.setText((String) rs.getObject(4));
-						id = (int) rs.getObject(5);
+						id = (Integer) rs.getObject(5);
 						message.setText("Found! \n If you want to remove this item, click delete button.");
 					}else if(rowcount >1 && textField.getText().compareTo("") != 0){
 						message.setText("More than one result!\nPlease be more specific.");
@@ -153,7 +153,7 @@ public class Delete extends JFrame {
 					}
 					try {
 						if(rs.next()){
-							int io_type = (int) rs.getObject(1);
+							int io_type = (Integer) rs.getObject(1);
 
 							String sql2 = "insert into inventory_detail (i_id, io_type, date) " +
 									"values ('"+id+"',"+io_type+", NOW())";
