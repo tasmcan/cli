@@ -167,7 +167,7 @@ public class MainFrame extends JFrame {
 					Start.showTable(sql, dtm);
 					break;
 				case 1: //show items in the lab at the moment
-					sql = "select * from (select i.id, c.name AS Category, p.p_code AS Product, i.sn AS SN, i.notes AS Notes, l.loc_code AS Location from inventory i, product p, category c, location l where c.id = p.c_id AND p.id = i.p_id AND (i.location = l.id OR i.location is null) AND i.availability=1) temp order by temp.Category";
+					sql = "select * from (select i.id, c.name AS Category, p.p_code AS Product, i.sn AS SN, i.notes AS Notes, l.loc_code AS Location from inventory i, product p, category c, location l where c.id = p.c_id AND p.id = i.p_id AND i.location = l.id AND i.availability=1) temp order by temp.Category";
 					excelSql = sql;
 					excelFile = "items_at_lab_" + today + ".xls";
 					Start.showTable(sql, dtm);
@@ -212,7 +212,7 @@ public class MainFrame extends JFrame {
 					comboBox.setSelectedIndex(0);
 				else{
 					String sql = "select i.id, c.name, p.p_code, i.sn, l.loc_code, i.availability from inventory i, product p, category c, location l " +
-								"where c.id = p.c_id AND p.id=i.p_id AND (i.location = l.id OR i.location is null) AND ((p.description LIKE '%"+ filter +"%') OR (p.p_code LIKE '%"+ filter +"%')"
+								"where c.id = p.c_id AND p.id=i.p_id AND i.location = l.id AND ((p.description LIKE '%"+ filter +"%') OR (p.p_code LIKE '%"+ filter +"%')"
 									+ " OR (i.notes LIKE '%"+ filter +"%') OR (i.sn LIKE '%"+ filter +"%') OR (c.name LIKE '%"+ filter +"%') )";
 				
 					Start.showTable(sql, dtm);
