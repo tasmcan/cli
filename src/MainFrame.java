@@ -207,6 +207,7 @@ public class MainFrame extends JFrame {
 		contentPane.add(lblSearch);
 		
 		filterField = new JTextField();
+		filterField.setToolTipText("Press enter to filter");
 		filterField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -228,8 +229,6 @@ public class MainFrame extends JFrame {
 				filterField.setText("");
 			}
 		});
-
-		filterField.setText("Press enter to filter");
 		filterField.setBounds(672, 36, 162, 24);
 		contentPane.add(filterField);
 		filterField.setColumns(10);
@@ -364,7 +363,7 @@ public class MainFrame extends JFrame {
 						selectedPID = (String) table.getModel().getValueAt(rowNumber, 1);
 						System.out.println("" + selectedPID);
 					}else{
-						selectedId = (Integer) table.getModel().getValueAt(rowNumber, 0);
+						selectedId = (int) table.getModel().getValueAt(rowNumber, 0);
 						System.out.println(""+ selectedId);
 					}
 					popup.show(e.getComponent(),
