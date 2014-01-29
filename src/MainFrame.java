@@ -92,6 +92,7 @@ public class MainFrame extends JFrame {
 		edit.btnFinish.setEnabled(false);
 		
 		
+		
 		JButton btnRent = new JButton("Send Demo");
 		menuBar.add(btnRent);
 		
@@ -125,6 +126,10 @@ public class MainFrame extends JFrame {
 				delete.setVisible(true);
 			}
 		});
+		
+		//Disable Delete Button on DeleteFrame
+		delete.btnDeleteNow.setEnabled(false);
+		
 		btnAddNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fillComboBox(addnew.getComboBox(), getList("select * from product order by p_code", 2));

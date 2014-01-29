@@ -37,7 +37,7 @@ public class Delete extends JFrame {
 	JTextArea description;
 	JTextArea product;
 	JButton btnFind;
-
+	JButton btnDeleteNow;
 	public int id;
 
 	/**
@@ -67,7 +67,7 @@ public class Delete extends JFrame {
 		btnFind.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				String sql = "select c.name, p.p_code, i.notes, i.sn, i.id from inventory i, product p, category c where c.id = p.c_id AND p.id=i.p_id AND i.sn LIKE '%"+ textField.getText() +"%' AND i.availability = 1";
+				String sql = "select c.name, p.p_code, i.notes, i.sn, i.id from inventory i, product p, category c where c.id = p.c_id AND p.id=i.p_id AND i.sn LIKE '%"+ textField.getText() +"%'";
 				
 				
 				try {
@@ -87,6 +87,7 @@ public class Delete extends JFrame {
 						textField.setText((String) rs.getObject(4));
 						id = (Integer) rs.getObject(5);
 						message.setText("Found! \n If you want to remove this item, click delete button.");
+						btnDeleteNow.setEnabled(true);
 					}else if(rowcount >1 && textField.getText().compareTo("") != 0){
 						message.setText("More than one result!\nPlease be more specific.");
 					}else if(textField.getText().compareTo("") == 0){
@@ -133,7 +134,7 @@ public class Delete extends JFrame {
 		lblNewLabel_1.setBounds(10, 100, 69, 14);
 		contentPane.add(lblNewLabel_1);
 
-		JButton btnDeleteNow = new JButton("DELETE");
+		btnDeleteNow = new JButton("DELETE");
 		btnDeleteNow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ResultSet rs = null;
