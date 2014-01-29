@@ -46,6 +46,9 @@ public class Start extends JFrame {
 	static Statement stmt;
 	static Statement stmt2;
 	static JButton btnNewButton;
+	
+	ConnectionListener connListen;
+	
 	MainFrame mf = new MainFrame(this);
 
 	/**
@@ -91,8 +94,20 @@ public class Start extends JFrame {
 	}
 	
 	public void initializeNetListener(){
-		ConnectionListener connListen = new ConnectionListener(connection);
+		connListen = new ConnectionListener(connection);
 		connListen.start();
+	}
+	public void pauseNetListener(){
+		try {
+			connListen.wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		};
+	}
+	
+	public void resumeNetListener(){
+		connListen.notify();
 	}
 
 	static void showTable(String sql, DefaultTableModel deteme) {
@@ -210,10 +225,11 @@ public class Start extends JFrame {
 				// if connection terminated, remove from list of active
 				// connections
 				try {
-					if (!connectionL.isValid(5))
+					if (!connectionL.isValid(5)){
 						System.out.println("Connection lost");
-					else
-						System.out.println("Connection OK...");
+						pauseNetListener();
+					}
+						
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
