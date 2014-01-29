@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -85,7 +86,6 @@ public class Start extends JFrame {
 			stmt2 = connection.createStatement();
 
 		} catch (java.lang.Exception ex) {
-			ex.printStackTrace();
 			JOptionPane.showMessageDialog(dialog,
 					"Cannot connect to database server with IP: " + SQLServer
 							+ ". \nCheck if server or network is down.");
@@ -225,9 +225,10 @@ public class Start extends JFrame {
 				// if connection terminated, remove from list of active
 				// connections
 				try {
-					if (!connectionL.isValid(5)){
+					if (!connectionL.isValid(3)){
 						System.out.println("Connection lost");
-						pauseNetListener();
+						showConnectionLostDialog();
+						break;
 					}
 						
 				} catch (SQLException e1) {
@@ -253,5 +254,44 @@ public class Start extends JFrame {
 			return false;
 		}
 
+	}
+	
+	
+	public void showConnectionLostDialog(){
+		String[] buttons = {"OK, close", "Retry"};
+		int choice = JOptionPane.showOptionDialog(null, "Retry or close?!", "Connection error!", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, buttons, buttons[1]);
+		
+		
+		if (choice == JOptionPane.YES_OPTION) {
+		    System.out.println("close choice");
+		    try {
+				connection.close();
+				stmt.close();
+				stmt2.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    
+		    
+		    System.exit(0);
+		} else if (choice == JOptionPane.NO_OPTION) {
+		    System.out.println("retry choice");
+		    initializeDB();
+		    initializeNetListener();
+		    
+		} else if (choice == JOptionPane.CLOSED_OPTION){
+			System.out.println("close option");
+			try {
+				connection.close();
+				stmt.close();
+				stmt2.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			System.exit(0);
+		}
 	}
 }

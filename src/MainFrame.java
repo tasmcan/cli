@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -76,6 +78,21 @@ public class MainFrame extends JFrame {
 		JButton btnDelete = new JButton("Delete");
 		menuBar.add(btnDelete);
 		
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+		    public void windowClosing(WindowEvent winEvt) {
+		        System.out.println("closing....");
+		        try {
+					Start.connection.close();
+					Start.stmt.close();
+					Start.stmt2.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        System.out.println("closed....");
+		        System.exit(0); 
+		    }
+		});
 		JButton btnEdit = new JButton("Edit");
 		btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
