@@ -9,6 +9,7 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
+import javax.xml.transform.Result;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -27,18 +28,18 @@ public class Edit extends JFrame {
 	private JComboBox category;
 	MainFrame mainframe;
 	JTextArea notes;
-	
+    public int id;
 	public int dbID = -1;
 	private JTextArea message;
-
+    JButton btnFinish;
 
 	/**
 	 * Create the frame.
 	 */
 	public Edit(MainFrame mf) {
 		mainframe = mf;
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 345, 385);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 372, 385);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -64,14 +65,13 @@ public class Edit extends JFrame {
 		product = new JComboBox();
 		product.setBounds(86, 61, 155, 20);
 		contentPane.add(product);
-		
+
 		JButton btnNewButton = new JButton("Find");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String sql = "select p.p_code, c.name, i.notes, i.sn, l.loc_code, i.id from inventory i, product p, category c, location l where c.id = p.c_id AND p.id=i.p_id AND i.location = l.id AND i.sn LIKE '%"+ sn.getText() +"%'";
 				ResultSet rs = mainframe.find(sql);
-				int id;
-				
+
 				int rowcount = 0;
 
 				try {
@@ -88,7 +88,8 @@ public class Edit extends JFrame {
 					
 					notes.setText((String) rs.getObject(3));
 					id = (Integer) rs.getObject(6);
-
+                    //Save Button Enabled
+                     btnFinish.setEnabled(true);
 					message.setText("Found! \n If you want to remove this item, click delete button.");
 				}else if(rowcount >1 && sn.getText().compareTo("") != 0){
 					message.setText("More than one result!\nPlease be more specific.");
@@ -121,10 +122,63 @@ public class Edit extends JFrame {
 		btnNewButton_1.setBounds(253, 33, 88, 23);
 		contentPane.add(btnNewButton_1);
 		
-		JButton btnFinish = new JButton("SAVE");
+		 btnFinish = new JButton("SAVE");
 		btnFinish.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
+                int productId=0;
+                int locationId =0;
+
+                String newSn = sn.getText();
+                String newCategory = category.getSelectedItem().toString();
+                String newLocation = location.getSelectedItem().toString();
+                String newProductId = product.getSelectedItem().toString();
+                String newNotes = notes.getText();
+
+                String getLocationIdSql ="select id from location where loc_code ='"+newLocation+"'";
+                String getProductIdSql ="select id from product where p_code ='"+newProductId+"'";
+
+                ResultSet rsLocationId = mainframe.find(getLocationIdSql);
+                try {
+                    if(rsLocationId.next())
+                    {
+                        locationId = (Integer)rsLocationId.getObject(1);
+
+                    }
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+                ResultSet rsProductId = mainframe.find(getProductIdSql);
+
+
+                try {
+                    if(rsProductId.next())
+                    {
+                         productId = (Integer)rsProductId.getObject(1);
+
+                    }
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+
+                String editSql ="Update inventory " +
+                                " set p_id= "+productId+", " +
+                                 "location="+locationId+", " +
+                                  "notes ='"+newNotes+"'"+"," +
+                                  "sn='"+newSn+"'"+
+                                    "where id ="+id;
+
+                try {
+                    Start.stmt.executeUpdate(editSql);
+                    message.setText("Editted \n Your changes has been saved for SN:"+newSn);
+                } catch (SQLException e1) {
+                    message.setText("SQL Exception \n Your changes has not been saved for SN:"+newSn);
+                    e1.printStackTrace();
+
+                }
+                System.out.println("Pd:"+productId + "\nLoc:"+locationId);
+
 			}
 		});
 		btnFinish.setBounds(174, 250, 142, 44);

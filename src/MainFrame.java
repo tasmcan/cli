@@ -88,6 +88,9 @@ public class MainFrame extends JFrame {
 			}
 		});
 		menuBar.add(btnEdit);
+		//Disable Save Button on EditFrame
+		edit.btnFinish.setEnabled(false);
+		
 		
 		JButton btnRent = new JButton("Send Demo");
 		menuBar.add(btnRent);
