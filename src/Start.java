@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -196,9 +198,10 @@ public class Start extends JFrame {
 
 				String sql = "select * from (select c.name AS Category, p.p_code AS Product, p.description AS Description, count(i.p_id) AS Total, sum(case when i.availability = 1 then 1 else 0 end) AS Lab, sum(case when i.availability = 0 then 1 else 0 end) as Demo  from inventory i, product p, category c where c.id = p.c_id AND p.id = i.p_id group by i.p_id) temp order by temp.Category";
 				mf.excelSql = sql;
+				DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
 				Date date = new Date();
-				String today = date.toString();
-				mf.excelFile = "./general_lab_inventory_" + today + ".xls";
+				
+				mf.excelFile = "./general_lab_inventory_" +  dateFormat.format(date) + ".xls";
 
 				Start.showTable(sql, mf.dtm);
 

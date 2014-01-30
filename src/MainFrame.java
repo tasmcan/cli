@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -177,8 +179,8 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				String sql;
 				
+				DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
 				Date date = new Date();
-				String today = date.toString();
 				
 				filterField.setToolTipText("Press enter to filter/search.");
 				filterField.setText("");
@@ -188,19 +190,19 @@ public class MainFrame extends JFrame {
 					sql = "select * from (select c.name AS Category, p.p_code AS Product, p.description AS Description, count(i.p_id) AS Total, sum(case when i.availability = 1 then 1 else 0 end) AS Lab, sum(case when i.availability = 0 then 1 else 0 end) as Demo  from inventory i, product p, category c where c.id = p.c_id AND p.id = i.p_id group by i.p_id) temp order by temp.Category";
 					excelSql = sql;
 					
-					excelFile = "./general_lab_inventory_" + today + ".xls";
+					excelFile = ".\\general_lab_inventory_" + dateFormat.format(date) + ".xls";
 					Start.showTable(sql, dtm);
 					break;
 				case 1: //show items in the lab at the moment
 					sql = "select * from (select i.id, c.name AS Category, p.p_code AS Product, i.sn AS SN, i.notes AS Notes, l.loc_code AS Location from inventory i, product p, category c, location l where c.id = p.c_id AND p.id = i.p_id AND i.location = l.id AND i.availability=1) temp order by temp.Category";
 					excelSql = sql;
-					excelFile = "./items_at_lab_" + today + ".xls";
+					excelFile = "./items_at_lab_" + dateFormat.format(date) + ".xls";
 					Start.showTable(sql, dtm);
 					break;
 				case 2: //show items at demo
 					sql = "select * from (select i.id, p.p_code AS Product, i.sn AS SN, m.sender AS Sender, m.receiver AS Receiver, m.organization AS Organization, m.senddate AS 'Send Date', m.promiseddate AS 'Expire Date' from movement m, inventory i, product p, category c where c.id = p.c_id AND p.id=i.p_id AND m.i_id = i.id AND m.io = 0) temp order by temp.Product";
 					excelSql = sql;
-					excelFile = "./items_at_demo_" + today + ".xls";
+					excelFile = "./items_at_demo_" +dateFormat.format(date) + ".xls";
 					Start.showTable(sql, dtm);
 					break;
 				case 3: //show expired items at demo
@@ -208,13 +210,13 @@ public class MainFrame extends JFrame {
 						"from movement m, inventory i, product p, category c " +
 						"where c.id = p.c_id AND p.id=i.p_id AND m.i_id = i.id AND m.io = 0 AND m.promiseddate <= NOW() ) temp order by temp.Product";
 					excelSql = sql;
-					excelFile = "./expired_demo_list_" + today + ".xls";
+					excelFile = "./expired_demo_list_" + dateFormat.format(date) + ".xls";
 					Start.showTable(sql, dtm);
 					break;
 				case 4: //show full inventory
 					sql = "select * from (select i.id, c.name AS Category, p.p_code AS Product, i.sn AS SN, i.availability AS Available, i.notes AS Notes from inventory i, product p, category c where c.id = p.c_id AND p.id = i.p_id) temp order by temp.Category";
 					excelSql = sql;
-					excelFile = "./full_inventory_data_" + today + ".xls";
+					excelFile = "./full_inventory_data_" + dateFormat.format(date) + ".xls";
 					Start.showTable(sql, dtm);
 					break;
 				}
