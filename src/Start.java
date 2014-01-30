@@ -198,7 +198,7 @@ public class Start extends JFrame {
 				mf.excelSql = sql;
 				Date date = new Date();
 				String today = date.toString();
-				mf.excelFile = "general_lab_inventory_" + today + ".xls";
+				mf.excelFile = "./general_lab_inventory_" + today + ".xls";
 
 				Start.showTable(sql, mf.dtm);
 
