@@ -25,7 +25,6 @@ public class Edit extends JFrame {
 	private JTextField sn;
 	private JComboBox product;
 	private JComboBox location;
-	private JComboBox category;
 	MainFrame mainframe;
 	JTextArea notes;
     public int id;
@@ -39,7 +38,7 @@ public class Edit extends JFrame {
 	public Edit(MainFrame mf) {
 		mainframe = mf;
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 372, 385);
+		setBounds(100, 100, 355, 349);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -50,11 +49,11 @@ public class Edit extends JFrame {
 		contentPane.add(lblSn);
 		
 		JLabel lblProduct = new JLabel("Product:");
-		lblProduct.setBounds(10, 63, 64, 14);
+		lblProduct.setBounds(10, 43, 64, 14);
 		contentPane.add(lblProduct);
 		
 		JLabel lblNewLabel = new JLabel("Notes:");
-		lblNewLabel.setBounds(10, 156, 46, 14);
+		lblNewLabel.setBounds(10, 97, 46, 14);
 		contentPane.add(lblNewLabel);
 		
 		sn = new JTextField();
@@ -63,7 +62,7 @@ public class Edit extends JFrame {
 		sn.setColumns(10);
 		
 		product = new JComboBox();
-		product.setBounds(86, 61, 155, 20);
+		product.setBounds(86, 41, 155, 20);
 		contentPane.add(product);
 
 		JButton btnNewButton = new JButton("Find");
@@ -83,7 +82,6 @@ public class Edit extends JFrame {
 				if(rs.next() && rowcount == 1){
 					sn.setText((String) rs.getObject(4));
 					product.setSelectedItem( (String) rs.getObject(1));
-					category.setSelectedItem( (String) rs.getObject(2));
 					location.setSelectedItem((String) rs.getObject(5));
 					
 					notes.setText((String) rs.getObject(3));
@@ -108,19 +106,11 @@ public class Edit extends JFrame {
 		contentPane.add(btnNewButton);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(86, 153, 201, 87);
+		scrollPane.setBounds(86, 97, 255, 105);
 		contentPane.add(scrollPane);
 		
 		notes = new JTextArea();
 		scrollPane.setViewportView(notes);
-		
-		JButton btnNewButton_1 = new JButton("Add");
-		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnNewButton_1.setBounds(253, 33, 88, 23);
-		contentPane.add(btnNewButton_1);
 		
 		 btnFinish = new JButton("SAVE");
 		btnFinish.addActionListener(new ActionListener() {
@@ -130,7 +120,6 @@ public class Edit extends JFrame {
                 int locationId =0;
 
                 String newSn = sn.getText();
-                String newCategory = category.getSelectedItem().toString();
                 String newLocation = location.getSelectedItem().toString();
                 String newProductId = product.getSelectedItem().toString();
                 String newNotes = notes.getText();
@@ -181,46 +170,38 @@ public class Edit extends JFrame {
 
 			}
 		});
-		btnFinish.setBounds(174, 250, 142, 44);
+		btnFinish.setBounds(135, 214, 206, 52);
 		contentPane.add(btnFinish);
 		
-		JButton btnCancel = new JButton("Cancel");
+		JButton btnCancel = new JButton("CLOSE");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		});
-		btnCancel.setBounds(21, 247, 117, 47);
+		btnCancel.setBounds(10, 214, 113, 52);
 		contentPane.add(btnCancel);
 		
 		JLabel lblNewLabel_1 = new JLabel("Location:");
-		lblNewLabel_1.setBounds(10, 89, 61, 16);
+		lblNewLabel_1.setBounds(10, 69, 61, 16);
 		contentPane.add(lblNewLabel_1);
 		
 		location = new JComboBox();
-		location.setBounds(86, 85, 155, 27);
+		location.setBounds(86, 65, 155, 27);
 		contentPane.add(location);
 		
 		JButton btnAdd = new JButton("Add");
-		btnAdd.setBounds(253, 57, 88, 29);
+		btnAdd.setBounds(253, 37, 88, 29);
 		contentPane.add(btnAdd);
 		
-		JLabel lblLocation = new JLabel("Category:");
-		lblLocation.setBounds(10, 37, 61, 16);
-		contentPane.add(lblLocation);
-		
-		category = new JComboBox();
-		category.setBounds(86, 31, 155, 27);
-		contentPane.add(category);
-		
 		JButton btnNewButton_2 = new JButton("Add");
-		btnNewButton_2.setBounds(253, 84, 88, 29);
+		btnNewButton_2.setBounds(253, 64, 88, 29);
 		contentPane.add(btnNewButton_2);
 		
 		message = new JTextArea();
 		message.setForeground(Color.RED);
 		message.setBackground(SystemColor.window);
-		message.setBounds(10, 305, 329, 52);
+		message.setBounds(10, 269, 331, 52);
 		contentPane.add(message);
 	}
 	public JComboBox getComboBoxProduct() {
@@ -228,8 +209,5 @@ public class Edit extends JFrame {
 	}
 	public JComboBox getComboBoxLocation() {
 		return location;
-	}
-	public JComboBox getComboBoxCategory() {
-		return category;
 	}
 }

@@ -58,7 +58,7 @@ public class ReceiveDemo extends JFrame {
 		dialog = new JFrame("Dialog");
 		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		JButton btnCancel = new JButton("Cancel");
+		JButton btnCancel = new JButton("CLOSE");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();

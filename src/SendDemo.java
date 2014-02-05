@@ -158,16 +158,16 @@ public class SendDemo extends JFrame {
 				}
 			}
 		});
-		btnNewButton.setBounds(114, 180, 169, 57);
+		btnNewButton.setBounds(99, 180, 184, 57);
 		contentPane.add(btnNewButton);
 		
-		JButton btnNewButton_1 = new JButton("Cancel");
+		JButton btnNewButton_1 = new JButton("CLOSE");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
 			}
 		});
-		btnNewButton_1.setBounds(10, 180, 94, 54);
+		btnNewButton_1.setBounds(10, 180, 77, 54);
 		contentPane.add(btnNewButton_1);
 	}
 }
