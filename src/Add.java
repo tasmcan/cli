@@ -243,7 +243,7 @@ public class Add extends JFrame {
 		message.setBounds(10, 281, 428, 51);
 		contentPane.add(message);
 
-		btnCancel = new JButton("CANCEL");
+		btnCancel = new JButton("CLOSE");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();

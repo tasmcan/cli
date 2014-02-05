@@ -30,6 +30,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import javax.swing.JLabel;
+
 public class Start extends JFrame {
 
 
@@ -46,10 +48,9 @@ public class Start extends JFrame {
 	// Statement to execute SQL commands
 	static Statement stmt;
 	static Statement stmt2;
-	static JButton btnNewButton;
 	
 	ConnectionListener connListen;
-	
+	JLabel lblStartingTheEngines;
 	MainFrame mf = new MainFrame(this);
 
 	/**
@@ -64,8 +65,10 @@ public class Start extends JFrame {
 					Start frame = new Start();
 					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
-					frame.getRootPane().setDefaultButton(btnNewButton);
-					
+					frame.initializeDB();
+					frame.initializeNetListener();
+					frame.initializeMain();
+					frame.setVisible(false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -76,6 +79,7 @@ public class Start extends JFrame {
 	// initialize Database connection
 	public void initializeDB() {
 		try {
+			lblStartingTheEngines.setText("Initializing Database Connections...");
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://"
 					+ SQLServer
@@ -84,19 +88,37 @@ public class Start extends JFrame {
 
 			stmt = connection.createStatement();
 			stmt2 = connection.createStatement();
+			lblStartingTheEngines.setText("Initialized DB Connections...");
 
 		} catch (java.lang.Exception ex) {
 			JOptionPane.showMessageDialog(dialog,
 					"Cannot connect to database server with IP: " + SQLServer
 							+ ". \nCheck if server or network is down.");
+			lblStartingTheEngines.setText("Initializing Database Connections failed...");
 			System.exit(1);
 		}
 	}
 	
 	public void initializeNetListener(){
+		lblStartingTheEngines.setText("Initializing connection listeners...");
 		connListen = new ConnectionListener(connection);
 		connListen.start();
+		lblStartingTheEngines.setText("Connection listener initialized...");
 	}
+	
+	public void initializeMain(){
+		String sql = "select * from (select c.name AS Category, p.p_code AS Product, p.description AS Description, count(i.p_id) AS Total, sum(case when i.availability = 1 then 1 else 0 end) AS Lab, sum(case when i.availability = 0 then 1 else 0 end) as Demo  from inventory i, product p, category c where c.id = p.c_id AND p.id = i.p_id group by i.p_id) temp order by temp.Category";
+		mf.excelSql = sql;
+		Date date = new Date();
+		String today = date.toString();
+		mf.excelFile = "general_lab_inventory_" + today + ".xls";
+
+		Start.showTable(sql, mf.dtm);
+
+		mf.setLocationRelativeTo(null);
+		mf.setVisible(true);
+	}
+	
 	public void pauseNetListener(){
 		try {
 			connListen.wait();
@@ -180,36 +202,18 @@ public class Start extends JFrame {
 	 * Create the frame.
 	 */
 	public Start() {
-		initializeDB();
-		initializeNetListener();
+		
 		setTitle("Cisco Demo Lab Inventory");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 359, 124);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 359, 115);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(2, 2, 2, 2));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-
-		btnNewButton = new JButton("START");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-
-				String sql = "select * from (select c.name AS Category, p.p_code AS Product, p.description AS Description, count(i.p_id) AS Total, sum(case when i.availability = 1 then 1 else 0 end) AS Lab, sum(case when i.availability = 0 then 1 else 0 end) as Demo  from inventory i, product p, category c where c.id = p.c_id AND p.id = i.p_id group by i.p_id) temp order by temp.Category";
-				mf.excelSql = sql;
-				Date date = new Date();
-				String today = date.toString();
-				mf.excelFile = "./general_lab_inventory_" + today + ".xls";
-
-				Start.showTable(sql, mf.dtm);
-
-				mf.setLocationRelativeTo(null);
-				mf.setVisible(true);
-				setVisible(false);
-			}
-		});
-		btnNewButton.setBounds(97, 11, 140, 64);
-		contentPane.add(btnNewButton);
-
+		
+		lblStartingTheEngines = new JLabel("Starting the engines...");
+		lblStartingTheEngines.setBounds(43, 33, 287, 16);
+		contentPane.add(lblStartingTheEngines);
 	}
 
 	class ConnectionListener extends Thread {

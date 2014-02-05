@@ -121,7 +121,7 @@ public class AddLoc extends JFrame {
 		message.setEditable(false);
 		message.setLineWrap(true);
 		
-		JButton btnCancel = new JButton("Cancel");
+		JButton btnCancel = new JButton("CLOSE");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();

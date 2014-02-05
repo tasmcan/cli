@@ -31,7 +31,6 @@ public class Delete extends JFrame {
 	private JPanel contentPane;
 	private JTextField textField;
 	MainFrame mainframe;
-	private JComboBox comboBox;
 	JTextArea message;
 	JTextArea category;
 	JTextArea description;
@@ -54,14 +53,6 @@ public class Delete extends JFrame {
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-
-		comboBox = new JComboBox();
-		comboBox.setBounds(89, 173, 149, 20);
-		contentPane.add(comboBox);
-
-		JLabel lblReason = new JLabel("Reason:");
-		lblReason.setBounds(10, 176, 69, 14);
-		contentPane.add(lblReason);
 
 		btnFind = new JButton("Find");
 		btnFind.addActionListener(new ActionListener() {
@@ -145,30 +136,23 @@ public class Delete extends JFrame {
 						JOptionPane.YES_NO_OPTION);
 
 				if(n == 0){
-					String sql1 = "select id from io_type where name LIKE '%" + comboBox.getSelectedItem() + "%'";
-					try {
-						rs = mainframe.login.stmt.executeQuery(sql1);
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					try {
-						if(rs.next()){
-							int io_type = (Integer) rs.getObject(1);
+							int io_type = 2;
 
 							String sql2 = "insert into inventory_detail (i_id, io_type, date) " +
 									"values ('"+id+"',"+io_type+", NOW())";
 							String sql3 = "update inventory set availability = null where id=" + id;
 							System.out.println(sql2);
 							System.out.println(sql3);
-							mainframe.login.stmt.execute(sql2);
-							mainframe.login.stmt.execute(sql3);
+							try {
+								mainframe.login.stmt.execute(sql2);
+								mainframe.login.stmt.execute(sql3);
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
 							message.setText("Deleted from inventory and added inventory_details!");
-						}
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+
 					textField.setText("");
 					category.setText("");
 					product.setText("");
@@ -182,7 +166,7 @@ public class Delete extends JFrame {
 
 		description = new JTextArea();
 		description.setEditable(false);
-		description.setBounds(89, 99, 207, 52);
+		description.setBounds(89, 99, 207, 76);
 		contentPane.add(description);
 
 		category = new JTextArea();
@@ -208,7 +192,7 @@ public class Delete extends JFrame {
 		message.setBounds(10, 248, 286, 76);
 		contentPane.add(message);
 		
-		JButton btnCancel = new JButton("CANCEL");
+		JButton btnCancel = new JButton("CLOSE");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				textField.setText("");
@@ -220,8 +204,5 @@ public class Delete extends JFrame {
 		});
 		btnCancel.setBounds(10, 204, 101, 42);
 		contentPane.add(btnCancel);
-	}
-	public JComboBox getComboBox() {
-		return comboBox;
 	}
 }
