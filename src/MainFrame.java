@@ -104,8 +104,7 @@ public class MainFrame extends JFrame {
 						getList("select * from product", 2));
 				fillComboBox(edit.getComboBoxLocation(),
 						getList("select * from location", 2));
-				fillComboBox(edit.getComboBoxCategory(),
-						getList("select * from category", 2));
+		
 				edit.setLocationRelativeTo(null);
 				edit.setVisible(true);
 				// edit.dbID = 0;
@@ -144,8 +143,7 @@ public class MainFrame extends JFrame {
 		});
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				fillComboBox(delete.getComboBox(),
-						getList("select * from io_type where io=0", 2));
+				
 				delete.setLocationRelativeTo(null);
 				delete.setVisible(true);
 			}
@@ -280,6 +278,8 @@ public class MainFrame extends JFrame {
 		contentPane.add(filterField);
 		filterField.setColumns(10);
 
+		
+	
 		// Extract as a Excel File -- current-date-and-time.xls
 
 		JButton btnToExcel = new JButton("To Excel");
@@ -307,7 +307,9 @@ public class MainFrame extends JFrame {
 			public void mousePressed(MouseEvent e) {
 				int selectedId;
 				String selectedPID;
-
+				
+		
+				
 				popup = new JPopupMenu();
 				JMenuItem addMenu = new JMenuItem("Add New");
 				JMenuItem deleteMenu = new JMenuItem("Delete");
@@ -316,7 +318,9 @@ public class MainFrame extends JFrame {
 				JMenuItem receiveMenu = new JMenuItem("Receive Demo");
 				JMenuItem addToDemoMenu = new JMenuItem("Add to Demo Cart");
 
-				table.setComponentPopupMenu(popup);
+			
+				
+				
 				addMenu.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -331,6 +335,7 @@ public class MainFrame extends JFrame {
 						System.out.println(((JMenuItem) e.getSource())
 								.getText().toString());
 						test();
+					
 					}
 				});
 
@@ -401,35 +406,40 @@ public class MainFrame extends JFrame {
 					break;
 				}
 
-				// Right mouse click
-				if (e.isPopupTrigger()) {
-					// get the coordinates of the mouse click
-					Point p = e.getPoint();
-
-					// get the row index that contains that coordinate
-					int rowNumber = table.rowAtPoint(p);
-
-					// Get the ListSelectionModel of the JTable
-					ListSelectionModel model = table.getSelectionModel();
-
-					// set the selected interval of rows. Using the "rowNumber"
-					// variable for the beginning and end selects only that one
-					// row.
-					model.setSelectionInterval(rowNumber, rowNumber);
-
-					if (comboBox.getSelectedIndex() == 0
-							&& filterField.getText().equals("")) {
-						selectedPID = (String) table.getModel().getValueAt(
-								rowNumber, 1);
-						System.out.println("" + selectedPID);
-					} else {
-						selectedId = (int) table.getModel().getValueAt(
-								rowNumber, 0);
-						System.out.println("" + selectedId);
-					}
-					popup.show(e.getComponent(), e.getX(), e.getY());
+//				// Right mouse click
+			
+				
+//				if (e.isPopupTrigger()) {
+//					// get the coordinates of the mouse click
+//					//Point p = e.getPoint();
+//
+//					// get the row index that contains that coordinate
+//					//int rowNumber = table.rowAtPoint(p);
+//
+//					// Get the ListSelectionModel of the JTable
+//					ListSelectionModel model = table.getSelectionModel();
+//
+//					// set the selected interval of rows. Using the "rowNumber"
+//					// variable for the beginning and end selects only that one
+//					// row.
+//					model.setSelectionInterval(rowNumber, rowNumber);
+//
+//					if (comboBox.getSelectedIndex() == 0
+//							&& filterField.getText().equals("")) {
+//						selectedPID = (String) table.getModel().getValueAt(
+//								rowNumber, 1);
+//						System.out.println("ad" + selectedPID);
+//					} else {
+//						selectedId = (int) table.getModel().getValueAt(
+//								rowNumber, 0);
+//						System.out.println("asd" + selectedId);
+//					}
+//					popup.show(e.getComponent(), e.getX(), e.getY());
+//				}
 				}
-			}
+			
+			
+			
 		});
 	}
 
