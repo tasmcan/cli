@@ -104,6 +104,7 @@ public class MainFrame extends JFrame {
 						getList("select * from product", 2));
 				fillComboBox(edit.getComboBoxLocation(),
 						getList("select * from location", 2));
+
 				edit.setLocationRelativeTo(null);
 				edit.setVisible(true);
 				// edit.dbID = 0;
@@ -279,6 +280,8 @@ public class MainFrame extends JFrame {
 		contentPane.add(filterField);
 		filterField.setColumns(10);
 
+		
+	
 		// Extract as a Excel File -- current-date-and-time.xls
 		JButton btnToExcel = new JButton("To Excel");
 		btnToExcel.addActionListener(new ActionListener() {
@@ -364,10 +367,6 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-	public void test() {
-		System.out.println("test");
-
-	}
 
 	public void showPopUp(MouseEvent e) {
 		int selectedId;
@@ -394,11 +393,11 @@ public class MainFrame extends JFrame {
 				selectedPID = (String) table.getModel()
 						.getValueAt(rowNumber, 1);
 				System.out.println("" + selectedPID);
-				JOptionPane.showMessageDialog(null, "" + selectedPID);
+				//JOptionPane.showMessageDialog(null, "" + selectedPID);
 			} else {
 				selectedId = (int) table.getModel().getValueAt(rowNumber, 0);
 				System.out.println("" + selectedId);
-				JOptionPane.showMessageDialog(null, "" + selectedId);
+				//JOptionPane.showMessageDialog(null, "" + selectedId);
 			}
 
 			popup = new JPopupMenu();
