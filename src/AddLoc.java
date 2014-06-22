@@ -82,6 +82,9 @@ public class AddLoc extends JFrame {
 						addf.mainframe.fillComboBox(addf.getComboBox_2(),
 								addf.mainframe.getList("select * from location order by loc_code",
 										2));
+						addf.mainframe.fillComboBox(addf.mainframe.edit.getComboBoxLocation(),
+								addf.mainframe.getList("select * from location order by loc_code",
+										2));
 						message.setText("Location ID is added to the database!");
 					} else if (loc_code.length() == 0) {
 						message.setText("You should enter a location ID!");

@@ -40,7 +40,7 @@ public class Start extends JFrame {
 	public static final String SQLServer = "10.62.36.151";
 	public static final String SQLUser = "root";
 	public static final String SQLPwd = "Password1";
-	public static final String DBName = "testdb";
+	public static final String DBName = "demolab";
 
 	private JPanel contentPane;
 	JFrame dialog;
@@ -62,8 +62,6 @@ public class Start extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					// UIManager.put("TextField.caretForeground", new
-					// ColorUIResource(Color.WHITE));
 					Start frame = new Start();
 					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);

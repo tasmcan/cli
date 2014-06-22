@@ -23,7 +23,6 @@ import java.awt.Font;
 import java.awt.SystemColor;
 import javax.swing.border.LineBorder;
 
-
 public class Delete extends JFrame {
 
 	JFrame dialog;
@@ -37,7 +36,7 @@ public class Delete extends JFrame {
 	JTextArea product;
 	JButton btnFind;
 	JButton btnDeleteNow;
-	public int id;
+	public int id = -1;
 
 	/**
 	 * Create the frame.
@@ -57,38 +56,58 @@ public class Delete extends JFrame {
 		btnFind = new JButton("Find");
 		btnFind.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				String sql = "select c.name, p.p_code, i.notes, i.sn, i.id from inventory i, product p, category c where c.id = p.c_id AND p.id=i.p_id AND i.sn LIKE '%"+ textField.getText() +"%'";
-				
-				
-				try {
-					
-					ResultSet rs = mainframe.login.stmt.executeQuery(sql);
-					int rowcount = 0;
+				if (id == -1) {
+					String sql = "select c.name, p.p_code, i.notes, i.sn, i.id from inventory i, product p, category c where c.id = p.c_id AND p.id=i.p_id AND i.sn LIKE '%"
+							+ textField.getText() + "%'";
 
-					if(rs.last()){
-						rowcount = rs.getRow();
-						rs.beforeFirst();
+					try {
+
+						ResultSet rs = mainframe.login.stmt.executeQuery(sql);
+						int rowcount = 0;
+
+						if (rs.last()) {
+							rowcount = rs.getRow();
+							rs.beforeFirst();
+						}
+
+						if (rs.next() && rowcount == 1) {
+							category.setText((String) rs.getObject(1));
+							product.setText((String) rs.getObject(2));
+							description.setText((String) rs.getObject(3));
+							textField.setText((String) rs.getObject(4));
+							id = (Integer) rs.getObject(5);
+							message.setText("Found! \n If you want to remove this item, click delete button.");
+							btnDeleteNow.setEnabled(true);
+						} else if (rowcount > 1
+								&& textField.getText().compareTo("") != 0) {
+							message.setText("More than one result!\nPlease be more specific.");
+						} else if (textField.getText().compareTo("") == 0) {
+							message.setText("Please enter an SN!");
+						} else {
+							message.setText("Not found!");
+						}
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				} else {
+					String sql = "select c.name, p.p_code, i.notes, i.sn from inventory i, product p, category c where c.id = p.c_id AND p.id=i.p_id AND i.id="
+							+ id;
+					try {
+						ResultSet rs = mainframe.login.stmt.executeQuery(sql);
+						if (rs.next()) {
+							category.setText((String) rs.getObject(1));
+							product.setText((String) rs.getObject(2));
+							description.setText((String) rs.getObject(3));
+							textField.setText((String) rs.getObject(4));
+							message.setText("Found! \n If you want to remove this item, click delete button.");
+							btnDeleteNow.setEnabled(true);
+						}
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
 
-					if(rs.next() && rowcount == 1){
-						category.setText((String) rs.getObject(1));
-						product.setText((String) rs.getObject(2));
-						description.setText((String) rs.getObject(3));
-						textField.setText((String) rs.getObject(4));
-						id = (Integer) rs.getObject(5);
-						message.setText("Found! \n If you want to remove this item, click delete button.");
-						btnDeleteNow.setEnabled(true);
-					}else if(rowcount >1 && textField.getText().compareTo("") != 0){
-						message.setText("More than one result!\nPlease be more specific.");
-					}else if(textField.getText().compareTo("") == 0){
-						message.setText("Please enter an SN!");
-					}else{
-						message.setText("Not found!");
-					}
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
 				}
 			}
 		});
@@ -100,7 +119,7 @@ public class Delete extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				int key = e.getKeyCode();
-				if(key == KeyEvent.VK_ENTER){
+				if (key == KeyEvent.VK_ENTER) {
 					btnFind.doClick();
 				}
 			}
@@ -129,35 +148,34 @@ public class Delete extends JFrame {
 		btnDeleteNow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ResultSet rs = null;
-				int n = JOptionPane.showConfirmDialog(
-						dialog,
+				int n = JOptionPane.showConfirmDialog(dialog,
 						"Are you sure to delete this?",
-						"Confirm Delete Operation",
-						JOptionPane.YES_NO_OPTION);
+						"Confirm Delete Operation", JOptionPane.YES_NO_OPTION);
 
-				if(n == 0){
-							int io_type = 2;
+				if (n == 0) {
+					int io_type = 2;
 
-							String sql2 = "insert into inventory_detail (i_id, io_type, date) " +
-									"values ('"+id+"',"+io_type+", NOW())";
-							String sql3 = "update inventory set availability = null where id=" + id;
-							System.out.println(sql2);
-							System.out.println(sql3);
-							try {
-								mainframe.login.stmt.execute(sql2);
-								mainframe.login.stmt.execute(sql3);
-							} catch (SQLException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							
-							message.setText("Deleted from inventory and added inventory_details!");
+					String sql2 = "insert into inventory_detail (i_id, io_type, date) "
+							+ "values ('" + id + "'," + io_type + ", NOW())";
+					String sql3 = "update inventory set availability = 2 where id="
+							+ id;
+					System.out.println(sql2);
+					System.out.println(sql3);
+					try {
+						mainframe.login.stmt.execute(sql2);
+						mainframe.login.stmt.execute(sql3);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					message.setText("Deleted from inventory and added inventory_details!");
 
 					textField.setText("");
 					category.setText("");
 					product.setText("");
 					description.setText("");
-				}else
+				} else
 					message.setText("Not deleted!");
 			}
 		});
@@ -189,9 +207,9 @@ public class Delete extends JFrame {
 		message.setColumns(5);
 		message.setText("Please enter an SN then click Find button to delete a specific product.");
 		message.setRows(5);
-		message.setBounds(10, 248, 286, 76);
+		message.setBounds(10, 258, 286, 66);
 		contentPane.add(message);
-		
+
 		JButton btnCancel = new JButton("CLOSE");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

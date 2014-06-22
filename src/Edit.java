@@ -27,10 +27,12 @@ public class Edit extends JFrame {
 	private JComboBox location;
 	MainFrame mainframe;
 	JTextArea notes;
-    public int id;
-	public int dbID = -1;
+    public int id = -1;
 	private JTextArea message;
     JButton btnFinish;
+    JButton btnNewButton;
+    AddPID addP;
+    AddLoc addL;
 
 	/**
 	 * Create the frame.
@@ -65,12 +67,15 @@ public class Edit extends JFrame {
 		product.setBounds(86, 41, 155, 20);
 		contentPane.add(product);
 
-		JButton btnNewButton = new JButton("Find");
+		btnNewButton = new JButton("Find");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				System.out.println(id + "find button");
+				if(id == -1){
 				String sql = "select p.p_code, c.name, i.notes, i.sn, l.loc_code, i.id from inventory i, product p, category c, location l where c.id = p.c_id AND p.id=i.p_id AND i.location = l.id AND i.sn LIKE '%"+ sn.getText() +"%'";
 				ResultSet rs = mainframe.find(sql);
 
+				System.out.println(id + "if id -1");
 				int rowcount = 0;
 
 				try {
@@ -99,6 +104,25 @@ public class Edit extends JFrame {
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+				}
+			}else{
+				System.out.println(id + "if id not -1");
+				String sql = "select p.p_code, c.name, i.notes, i.sn, l.loc_code from inventory i, product p, category c, location l where c.id = p.c_id AND p.id=i.p_id AND i.location = l.id AND i.id="+id;
+				ResultSet rs = mainframe.find(sql);	
+				try {
+					if(rs.next()){
+						sn.setText((String) rs.getObject(4));
+						product.setSelectedItem( (String) rs.getObject(1));
+						location.setSelectedItem((String) rs.getObject(5));
+						
+						notes.setText((String) rs.getObject(3));
+						btnFinish.setEnabled(true);
+						message.setText("If you want to edit this item, click save button after changing details.");
+					}
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				}
 			}
 		});
@@ -139,7 +163,6 @@ public class Edit extends JFrame {
                 }
                 ResultSet rsProductId = mainframe.find(getProductIdSql);
 
-
                 try {
                     if(rsProductId.next())
                     {
@@ -150,8 +173,7 @@ public class Edit extends JFrame {
                     e1.printStackTrace();
                 }
 
-
-                String editSql ="Update inventory " +
+                String editSql ="update inventory " +
                                 " set p_id= "+productId+", " +
                                  "location="+locationId+", " +
                                   "notes ='"+newNotes+"'"+"," +
@@ -166,7 +188,6 @@ public class Edit extends JFrame {
                     e1.printStackTrace();
 
                 }
-                System.out.println("Pd:"+productId + "\nLoc:"+locationId);
 
 			}
 		});
@@ -191,10 +212,27 @@ public class Edit extends JFrame {
 		contentPane.add(location);
 		
 		JButton btnAdd = new JButton("Add");
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addP = new AddPID(mainframe.addnew);
+				mainframe.fillComboBox(addP.getComboBox(),
+						mainframe.getList("select * from category", 2));
+				addP.setLocationRelativeTo(null);
+				addP.setVisible(true);
+				
+			}
+		});
 		btnAdd.setBounds(253, 37, 88, 29);
 		contentPane.add(btnAdd);
 		
 		JButton btnNewButton_2 = new JButton("Add");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addL = new AddLoc(mainframe.addnew);
+				addL.setLocationRelativeTo(null);
+				addL.setVisible(true);
+			}
+		});
 		btnNewButton_2.setBounds(253, 64, 88, 29);
 		contentPane.add(btnNewButton_2);
 		
@@ -203,6 +241,9 @@ public class Edit extends JFrame {
 		message.setBackground(SystemColor.window);
 		message.setBounds(10, 269, 331, 52);
 		contentPane.add(message);
+	}
+	public void setID(int id){
+		this.id = id;
 	}
 	public JComboBox getComboBoxProduct() {
 		return product;

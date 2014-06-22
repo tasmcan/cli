@@ -10,6 +10,7 @@ import javax.swing.JTextArea;
 import java.awt.SystemColor;
 import java.awt.Font;
 import java.awt.Component;
+import java.awt.Color;
 
 
 public class About extends JFrame {
@@ -34,25 +35,19 @@ public class About extends JFrame {
 		lblSafatinventory.setBounds(10, 11, 241, 14);
 		contentPane.add(lblSafatinventory);
 		
-		JLabel lblDeveloper = new JLabel("Authors");
+		JLabel lblDeveloper = new JLabel("Credits");
 		lblDeveloper.setHorizontalAlignment(SwingConstants.CENTER);
 		lblDeveloper.setFont(new Font("Segoe UI", Font.BOLD, 14));
-		lblDeveloper.setBounds(10, 93, 241, 14);
+		lblDeveloper.setBounds(10, 79, 241, 14);
 		contentPane.add(lblDeveloper);
-		
-		JLabel lblDeveloperSafaTopal = new JLabel("Software Developer: Safa TOPAL");
-		lblDeveloperSafaTopal.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 12));
-		lblDeveloperSafaTopal.setHorizontalAlignment(SwingConstants.CENTER);
-		lblDeveloperSafaTopal.setBounds(10, 118, 241, 14);
-		contentPane.add(lblDeveloperSafaTopal);
 		
 		JLabel lblProjectManagerCafer = new JLabel("Project Manager: Cafer DURSUN");
 		lblProjectManagerCafer.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 12));
 		lblProjectManagerCafer.setHorizontalAlignment(SwingConstants.CENTER);
-		lblProjectManagerCafer.setBounds(10, 143, 241, 14);
+		lblProjectManagerCafer.setBounds(10, 167, 241, 14);
 		contentPane.add(lblProjectManagerCafer);
 		
-		JLabel lblVersion = new JLabel("Version: 0.9.3");
+		JLabel lblVersion = new JLabel("Version: 0.9.8");
 		lblVersion.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 12));
 		lblVersion.setHorizontalAlignment(SwingConstants.CENTER);
 		lblVersion.setBounds(10, 237, 241, 14);
@@ -72,5 +67,14 @@ public class About extends JFrame {
 		txtrInventoryControlSoftware.setText("Inventory Control System Software \t         for Cisco Demo Labs");
 		txtrInventoryControlSoftware.setBounds(20, 37, 241, 44);
 		contentPane.add(txtrInventoryControlSoftware);
+		
+		JTextArea txtrSoftwareDeveloperSafa = new JTextArea();
+		txtrSoftwareDeveloperSafa.setForeground(Color.BLACK);
+		txtrSoftwareDeveloperSafa.setLineWrap(true);
+		txtrSoftwareDeveloperSafa.setEditable(false);
+		txtrSoftwareDeveloperSafa.setText("Software Developers: \nSafa TOPAL \nMehmet Can Ta\u015F");
+		txtrSoftwareDeveloperSafa.setBackground(SystemColor.window);
+		txtrSoftwareDeveloperSafa.setBounds(39, 105, 222, 50);
+		contentPane.add(txtrSoftwareDeveloperSafa);
 	}
 }

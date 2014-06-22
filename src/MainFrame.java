@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JMenuItem;
@@ -55,6 +56,11 @@ public class MainFrame extends JFrame {
 	JPopupMenu popup;
 	String excelSql;
 	String excelFile;
+	int selectedId = -1;
+	String selectedPID;
+	public ArrayList<Integer> demoChartArList = new ArrayList<Integer>();
+	JLabel lblChartSize ;
+	int rowNumber;
 
 	/**
 	 * Create the frame.
@@ -105,9 +111,9 @@ public class MainFrame extends JFrame {
 				fillComboBox(edit.getComboBoxLocation(),
 						getList("select * from location", 2));
 
+				edit.id = -1;
 				edit.setLocationRelativeTo(null);
 				edit.setVisible(true);
-				// edit.dbID = 0;
 			}
 		});
 		menuBar.add(btnEdit);
@@ -121,6 +127,7 @@ public class MainFrame extends JFrame {
 		JButton btnReceiveDemo = new JButton("Receive Demo");
 		btnReceiveDemo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				receive.inid = -1;
 				receive.setLocationRelativeTo(null);
 				receive.setVisible(true);
 			}
@@ -137,12 +144,14 @@ public class MainFrame extends JFrame {
 		menuBar.add(btnAbout);
 		btnRent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				send.inid = -1;
 				send.setLocationRelativeTo(null);
 				send.setVisible(true);
 			}
 		});
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				delete.id = -1;
 				delete.setLocationRelativeTo(null);
 				delete.setVisible(true);
 			}
@@ -169,7 +178,6 @@ public class MainFrame extends JFrame {
 		contentPane.add(scrollPane);
 
 		table = new JTable(dtm);
-		table.setEnabled(false);
 		table.setFillsViewportHeight(true);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		table.setBorder(new EmptyBorder(1, 1, 1, 1));
@@ -231,11 +239,17 @@ public class MainFrame extends JFrame {
 							+ dateFormat.format(date) + ".xls";
 					Start.showTable(sql, dtm);
 					break;
+				/*case 5:
+					sql = "";
+					excelSql = sql;
+					excelFile = "deleted_returned_items_" + dateFormat.format(date) + ".xls";
+					Start.showTable(sql, dtm);
+					break;*/
 				}
 			}
 		});
 		comboBox.setModel(new DefaultComboBoxModel(new String[] { "Default",
-				"At lab", "At demo", "Expired demo", "Full inventory" }));
+				"At lab", "At demo", "Expired demo", "Full inventory"}));
 		comboBox.setBounds(124, 36, 126, 24);
 		contentPane.add(comboBox);
 
@@ -262,8 +276,7 @@ public class MainFrame extends JFrame {
 							+ filter
 							+ "%') OR (i.sn LIKE '%"
 							+ filter
-							+ "%') OR (c.name LIKE '%" + filter + "%') )";
-
+							+ "%') OR (c.name LIKE '%" + filter + "%'))";
 					Start.showTable(sql, dtm);
 				}
 			}
@@ -305,6 +318,16 @@ public class MainFrame extends JFrame {
 		contentPane.add(btnToExcel);
 
 		table.setComponentPopupMenu(popup);
+		
+		/*JLabel lblChartIcon = new JLabel("New label");
+		
+		lblChartIcon.setIcon(new ImageIcon("..\\\\safato-cli-bc247b13f1e8\\images\\64_64_empty-cart-dark.png"));
+		lblChartIcon.setBounds(546, 28, 57, 39);
+		contentPane.add(lblChartIcon);
+		
+		lblChartSize = new JLabel("N");
+		lblChartSize.setBounds(567, 40, 35, 10);
+		contentPane.add(lblChartSize);*/
 
 		// Right Click PopUp Menu-- Start
 		table.addMouseListener(new MouseAdapter() {
@@ -369,8 +392,7 @@ public class MainFrame extends JFrame {
 
 
 	public void showPopUp(MouseEvent e) {
-		int selectedId;
-		String selectedPID;
+		
 
 		// Right mouse click
 		if (e.isPopupTrigger()) {
@@ -378,7 +400,7 @@ public class MainFrame extends JFrame {
 			Point p = e.getPoint();
 
 			// get the row index that contains that coordinate
-			int rowNumber = table.rowAtPoint(p);
+			rowNumber = table.rowAtPoint(p);
 
 			// Get the ListSelectionModel of the JTable
 			ListSelectionModel model = table.getSelectionModel();
@@ -397,7 +419,6 @@ public class MainFrame extends JFrame {
 			} else {
 				selectedId = (int) table.getModel().getValueAt(rowNumber, 0);
 				System.out.println("" + selectedId);
-				//JOptionPane.showMessageDialog(null, "" + selectedId);
 			}
 
 			popup = new JPopupMenu();
@@ -421,6 +442,9 @@ public class MainFrame extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					System.out.println(((JMenuItem) e.getSource()).getText()
 							.toString());
+					delete.id = selectedId;
+					delete.btnFind.doClick();
+					delete.setVisible(true);
 				}
 			});
 
@@ -429,6 +453,15 @@ public class MainFrame extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					System.out.println(((JMenuItem) e.getSource()).getText()
 							.toString());
+					edit.id = selectedId;
+					fillComboBox(edit.getComboBoxProduct(),
+							getList("select * from product", 2));
+					fillComboBox(edit.getComboBoxLocation(),
+							getList("select * from location", 2));
+
+					edit.setLocationRelativeTo(null);
+					edit.btnNewButton.doClick();
+					edit.setVisible(true);
 				}
 			});
 
@@ -445,6 +478,10 @@ public class MainFrame extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					System.out.println(((JMenuItem) e.getSource()).getText()
 							.toString());
+					receive.inid = selectedId;
+					receive.setLocationRelativeTo(null);
+					receive.btnFind.doClick();
+					receive.setVisible(true);
 				}
 			});
 
@@ -453,19 +490,23 @@ public class MainFrame extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					System.out.println(((JMenuItem) e.getSource()).getText()
 							.toString());
+					int dbLocalId = (int) table.getModel().getValueAt(rowNumber, 0);
+					
+					demoChartArList.add(dbLocalId);
+					lblChartSize.setText(demoChartArList.size()+"");
+					
+					System.out.println(((JMenuItem) e.getSource()).getText().toString()+" test "+dbLocalId);
 				}
 			});
 
 			switch (comboBox.getSelectedIndex()) {
 			case 0: // show default display table
-				popup.add(addMenu);
-				popup.add(deleteMenu);
-				popup.add(editMenu);
-				popup.add(sendMenu);
-				popup.add(addToDemoMenu);
+				//popup.add(deleteMenu);
+				//popup.add(editMenu);
+				//popup.add(sendMenu);
+				//popup.add(addToDemoMenu);
 				break;
 			case 1: // show at lab
-				popup.add(addMenu);
 				popup.add(deleteMenu);
 				popup.add(editMenu);
 				popup.add(sendMenu);
@@ -482,12 +523,9 @@ public class MainFrame extends JFrame {
 				popup.add(editMenu);
 				break;
 			case 4: // show full inventory
-				popup.add(addMenu);
 				popup.add(deleteMenu);
 				popup.add(editMenu);
-				popup.add(sendMenu);
-				popup.add(receiveMenu);
-				popup.add(addToDemoMenu);
+				//popup.add(editMenu).setEnabled(false);
 				break;
 			}
 			

@@ -94,6 +94,9 @@ public class AddPID extends JFrame {
 						addf.mainframe.fillComboBox(addf.getComboBox(),
 								addf.mainframe.getList("select * from product order by p_code",
 										2));
+						addf.mainframe.fillComboBox(addf.mainframe.edit.getComboBoxProduct(),
+								addf.mainframe.getList("select * from product order by p_code",
+										2));
 						message.setText("Product ID added to the database!");
 					} else if (p_code.length() == 0) {
 						message.setText("You should enter a product code!");

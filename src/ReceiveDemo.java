@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.SystemColor;
 
-
 public class ReceiveDemo extends JFrame {
 
 	private JPanel contentPane;
@@ -28,19 +27,18 @@ public class ReceiveDemo extends JFrame {
 	private JTextField organization;
 	JTextArea message;
 	boolean found = false;
-	int inid;
+	public int inid = -1;
 	int mid;
-	
+
 	JLabel sender;
 	JLabel receiver;
 	JLabel senddate;
-	
+
 	JTextArea notes;
 	JLabel lblExpectedDate;
 	JLabel expecteddate;
-	
+
 	JFrame dialog;
-	
 	JButton btnFind;
 
 	/**
@@ -54,7 +52,7 @@ public class ReceiveDemo extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+
 		dialog = new JFrame("Dialog");
 		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -85,42 +83,55 @@ public class ReceiveDemo extends JFrame {
 		btnFind.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String sql = "";
-				if(sn.getText().compareTo("") != 0 && organization.getText().compareTo("") == 0){
-					sql = "select i.id, i.sn, m.organization, m.sender, m.receiver, m.senddate, m.promiseddate, m.id, m.notes from inventory i, movement m where i.id = m.i_id AND i.sn LIKE '%"+ sn.getText().trim() +"%' AND m.io=0";
-				}else if(sn.getText().compareTo("") == 0 && organization.getText().compareTo("") != 0){
-					sql = "select i.id, i.sn, m.organization, m.sender, m.receiver, m.senddate, m.promiseddate, m.id, m.notes from inventory i, movement m where i.id = m.i_id AND m.organization LIKE '%"+ organization.getText().trim() +"%' AND m.io=0";
-				}else if(sn.getText().compareTo("") != 0 && organization.getText().compareTo("") !=0){
-					sql = "select i.id, i.sn, m.organization, m.sender, m.receiver, m.senddate, m.promiseddate, m.id, m.notes from inventory i, movement m where i.id = m.i_id AND i.sn LIKE '%"+ sn.getText().trim() +"%' AND m.organization LIKE '%"+ organization.getText().trim() +"%' AND m.io=0";
-				}else if(sn.getText().compareTo("") == 0 && organization.getText().compareTo("") == 0){
+				if(inid != -1){
+					sql = "select i.id, i.sn, m.organization, m.sender, m.receiver, m.senddate, m.promiseddate, m.id, m.notes from inventory i, movement m where i.id = m.i_id AND m.io=0 AND i.id="+inid;
+				}else if (sn.getText().compareTo("") != 0
+						&& organization.getText().compareTo("") == 0) {
+					sql = "select i.id, i.sn, m.organization, m.sender, m.receiver, m.senddate, m.promiseddate, m.id, m.notes from inventory i, movement m where i.id = m.i_id AND i.sn LIKE '%"
+							+ sn.getText().trim() + "%' AND m.io=0";
+				} else if (sn.getText().compareTo("") == 0
+						&& organization.getText().compareTo("") != 0) {
+					sql = "select i.id, i.sn, m.organization, m.sender, m.receiver, m.senddate, m.promiseddate, m.id, m.notes from inventory i, movement m where i.id = m.i_id AND m.organization LIKE '%"
+							+ organization.getText().trim() + "%' AND m.io=0";
+				} else if (sn.getText().compareTo("") != 0
+						&& organization.getText().compareTo("") != 0) {
+					sql = "select i.id, i.sn, m.organization, m.sender, m.receiver, m.senddate, m.promiseddate, m.id, m.notes from inventory i, movement m where i.id = m.i_id AND i.sn LIKE '%"
+							+ sn.getText().trim()
+							+ "%' AND m.organization LIKE '%"
+							+ organization.getText().trim() + "%' AND m.io=0";
+				} else if (sn.getText().compareTo("") == 0
+						&& organization.getText().compareTo("") == 0) {
 					message.setText("Please enter something!");
 					return;
 				}
+
+				// System.out.println(sql);
 				
-				//System.out.println(sql);
 				try {
 					ResultSet rs = Start.stmt.executeQuery(sql);
 					int rowcount = 0;
 
-					if(rs.last()){
+					if (rs.last()) {
 						rowcount = rs.getRow();
 						rs.beforeFirst();
 					}
 
-					if(rs.next() && rowcount == 1){
+					if (rs.next() && rowcount == 1) {
 						found = true;
-						sn.setText((String)rs.getObject(2));
+						sn.setText((String) rs.getObject(2));
 						organization.setText((String) rs.getObject(3));
 						sender.setText((String) rs.getObject(4));
 						receiver.setText((String) rs.getObject(5));
 						senddate.setText(((Date) rs.getObject(6)).toString());
-						expecteddate.setText(((Date) rs.getObject(7)).toString());
+						expecteddate.setText(((Date) rs.getObject(7))
+								.toString());
 						message.setText("Found! \n If this item is received, click RECEIVED button.");
 						inid = (Integer) rs.getObject(1);
 						mid = (Integer) rs.getObject(8);
-						notes.setText((String)rs.getObject(9));
-					}else if(rowcount >1){
+						notes.setText((String) rs.getObject(9));
+					} else if (rowcount > 1) {
 						message.setText("More than one result!\nPlease be more specific.");
-					}else{
+					} else {
 						message.setText("Not found!");
 					}
 				} catch (SQLException e1) {
@@ -188,38 +199,41 @@ public class ReceiveDemo extends JFrame {
 		JButton btnReturned = new JButton("Returned!");
 		btnReturned.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(!found){
+				if (!found) {
 					message.setText("First search and find the item you receive...");
 					return;
 				}
 				String sql1 = "update movement set io = 1, receivedate = NOW(), notes = ? where id = ?";
 				String sql2 = "update inventory set availability = 1 where id = ?";
-				
+
 				try {
-					PreparedStatement statement1 = Start.connection.prepareStatement(sql1);
+					PreparedStatement statement1 = Start.connection
+							.prepareStatement(sql1);
 					statement1.setString(1, notes.getText());
 					statement1.setInt(2, mid);
-					
-					PreparedStatement statement2 = Start.connection.prepareStatement(sql2);
+
+					PreparedStatement statement2 = Start.connection
+							.prepareStatement(sql2);
 					statement2.setInt(1, inid);
-					
+
 					statement1.executeUpdate();
 					statement2.executeUpdate();
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
+
 				System.out.println(sql1);
 				System.out.println(sql2);
-				
-				int n = JOptionPane.showConfirmDialog(
-					    dialog,
-					    "Your demo entry is saved! Do you want to receive another item from demo?",
-					    "One more item?",
-					    JOptionPane.YES_NO_OPTION);
-				
-				if(n == 0){
+
+				int n = JOptionPane
+						.showConfirmDialog(
+								dialog,
+								"Your demo entry is saved! Do you want to receive another item from demo?",
+								"One more item?", JOptionPane.YES_NO_OPTION);
+
+				if (n == 0) {
+					sn.setText("");
 					sender.setText("");
 					receiver.setText("");
 					organization.setText("");
@@ -227,23 +241,23 @@ public class ReceiveDemo extends JFrame {
 					expecteddate.setText("");
 					notes.setText("");
 					message.setText("Please search for the item to mark it returned.");
-					
-				}else{
+					inid = -1;
+				} else {
 					dispose();
 				}
 			}
 		});
 		btnReturned.setBounds(123, 259, 185, 57);
 		contentPane.add(btnReturned);
-		
+
 		notes = new JTextArea();
 		notes.setBounds(89, 167, 219, 83);
 		contentPane.add(notes);
-		
+
 		JLabel lblNotes = new JLabel("Notes:");
 		lblNotes.setBounds(10, 167, 69, 14);
 		contentPane.add(lblNotes);
-		
+
 		expecteddate = new JLabel("");
 		expecteddate.setBounds(99, 142, 151, 14);
 		contentPane.add(expecteddate);
