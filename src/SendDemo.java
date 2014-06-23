@@ -37,7 +37,7 @@ public class SendDemo extends JFrame {
 	JTextArea category;
 	JTextArea product;
 	boolean found = false;
-	int inid;
+	public int inid = -1;
 	JButton button;
 	
 	/**

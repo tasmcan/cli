@@ -202,7 +202,9 @@ public class MainFrame extends JFrame {
 
 				switch (comboBox.getSelectedIndex()) {
 				case 0: // show default display table
-					sql = "select * from (select c.name AS Category, p.p_code AS Product, p.description AS Description, count(i.p_id) AS Total, sum(case when i.availability = 1 then 1 else 0 end) AS Lab, sum(case when i.availability = 0 then 1 else 0 end) as Demo  from inventory i, product p, category c where c.id = p.c_id AND p.id = i.p_id group by i.p_id) temp order by temp.Category";
+					sql = "select * from (select c.name AS Category, p.p_code AS Product, p.description AS Description, count(i.p_id) AS Total, sum(case when i.availability = 1 then 1 else 0 end) AS Lab, sum(case when i.availability = 0 then 1 else 0 end) as Demo " +
+							"from inventory i, product p, category c " +
+							"where c.id = p.c_id AND p.id = i.p_id group by i.p_id) temp order by temp.Category";
 					excelSql = sql;
 
 					excelFile = "general_lab_inventory_"
@@ -210,30 +212,36 @@ public class MainFrame extends JFrame {
 					Start.showTable(sql, dtm);
 					break;
 				case 1: // show items in the lab at the moment
-					sql = "select * from (select i.id AS ID, c.name AS Category, p.p_code AS Product, i.sn AS SN, i.notes AS Notes, l.loc_code AS Location from inventory i, product p, category c, location l where c.id = p.c_id AND p.id = i.p_id AND i.location = l.id AND i.availability=1) temp order by temp.Category";
+					sql = "select * from (select i.id AS ID, c.name AS Category, p.p_code AS Product, i.sn AS SN, t.name AS Type, i.notes AS Notes, l.loc_code AS Location " +
+							"from inventory i, product p, category c, location l, inventory_type t " +
+							"where c.id = p.c_id AND i.type = t.id AND p.id = i.p_id AND i.location = l.id AND i.availability=1) temp order by temp.Category";
 					excelSql = sql;
 					excelFile = "items_at_lab_" + dateFormat.format(date)
 							+ ".xls";
 					Start.showTable(sql, dtm);
 					break;
 				case 2: // show items at demo
-					sql = "select * from (select i.id, p.p_code AS Product, i.sn AS SN, m.sender AS Sender, m.receiver AS Receiver, m.organization AS Organization, m.senddate AS 'Send Date', m.promiseddate AS 'Expire Date' from movement m, inventory i, product p, category c where c.id = p.c_id AND p.id=i.p_id AND m.i_id = i.id AND m.io = 0) temp order by temp.Product";
+					sql = "select * from (select i.id, p.p_code AS Product, i.sn AS SN, t.name AS Type,  m.sender AS Sender, m.receiver AS Receiver, m.organization AS Organization, m.senddate AS 'Send Date', m.promiseddate AS 'Expire Date' " +
+							"from movement m, inventory i, product p, category c, inventory_type t " +
+							"where c.id = p.c_id AND i.type = t.id AND p.id=i.p_id AND m.i_id = i.id AND m.io = 0) temp order by temp.Product";
 					excelSql = sql;
 					excelFile = "items_at_demo_" + dateFormat.format(date)
 							+ ".xls";
 					Start.showTable(sql, dtm);
 					break;
 				case 3: // show expired items at demo
-					sql = "select * from (select i.id, p.p_code AS Product, i.sn AS SN, m.sender AS Sender, m.receiver AS Receiver, m.organization AS Organization, m.senddate AS 'Send Date', m.promiseddate AS 'Expire Date'"
-							+ "from movement m, inventory i, product p, category c "
-							+ "where c.id = p.c_id AND p.id=i.p_id AND m.i_id = i.id AND m.io = 0 AND m.promiseddate <= NOW() ) temp order by temp.Product";
+					sql = "select * from (select i.id, p.p_code AS Product, i.sn AS SN, t.name AS Type, m.sender AS Sender, m.receiver AS Receiver, m.organization AS Organization, m.senddate AS 'Send Date', m.promiseddate AS 'Expire Date'"
+							+ "from movement m, inventory i, product p, category c, inventory_type t "
+							+ "where c.id = p.c_id AND i.type = t.id AND p.id=i.p_id AND m.i_id = i.id AND m.io = 0 AND m.promiseddate <= NOW() ) temp order by temp.Product";
 					excelSql = sql;
 					excelFile = "expired_demo_list_" + dateFormat.format(date)
 							+ ".xls";
 					Start.showTable(sql, dtm);
 					break;
 				case 4: // show full inventory
-					sql = "select * from (select i.id, c.name AS Category, p.p_code AS Product, i.sn AS SN, i.availability AS Available, i.notes AS Notes from inventory i, product p, category c where c.id = p.c_id AND p.id = i.p_id) temp order by temp.Category";
+					sql = "select * from (select i.id, c.name AS Category, p.p_code AS Product, i.sn AS SN, t.name AS Type, i.availability AS Available, i.notes AS Notes " +
+							"from inventory i, product p, category c, inventory_type t " +
+							"where c.id = p.c_id AND p.id = i.p_id AND i.type = t.id) temp order by temp.Category";
 					excelSql = sql;
 					excelFile = "full_inventory_data_"
 							+ dateFormat.format(date) + ".xls";
@@ -266,7 +274,7 @@ public class MainFrame extends JFrame {
 				if (filterField.getText().compareTo("") == 0)
 					comboBox.setSelectedIndex(0);
 				else {
-					String sql = "select i.id, c.name, p.p_code, i.sn, l.loc_code, i.availability from inventory i, product p, category c, location l "
+					String sql = "select i.id, c.name, p.p_code, i.sn, l.loc_code, i.type AS Type, i.availability from inventory i, product p, category c, location l "
 							+ "where c.id = p.c_id AND p.id=i.p_id AND i.location = l.id AND ((p.description LIKE '%"
 							+ filter
 							+ "%') OR (p.p_code LIKE '%"
@@ -470,6 +478,10 @@ public class MainFrame extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					System.out.println(((JMenuItem) e.getSource()).getText()
 							.toString());
+					send.inid = selectedId;
+					System.out.println("inid" + send.inid);
+					send.form.setLocationRelativeTo(null);
+					send.form.setVisible(true);
 				}
 			});
 

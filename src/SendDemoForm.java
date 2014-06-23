@@ -37,7 +37,7 @@ public class SendDemoForm extends JFrame {
 	 */
 	public SendDemoForm(SendDemo snddm) {
 		senddemo = snddm;
-		setTitle("Send Demo - Finish");
+		setTitle("Send Demo - Finish - ID: "+ senddemo.inid);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 477, 300);
 		dialog = new JFrame("Dialog");

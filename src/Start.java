@@ -40,7 +40,7 @@ public class Start extends JFrame {
 	public static final String SQLServer = "10.62.36.151";
 	public static final String SQLUser = "root";
 	public static final String SQLPwd = "Password1";
-	public static final String DBName = "demolab";
+	public static final String DBName = "testdb";
 
 	private JPanel contentPane;
 	JFrame dialog;
