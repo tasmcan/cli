@@ -47,6 +47,7 @@ public class MainFrame extends JFrame {
 	Add addnew = new Add(this);
 	Delete delete = new Delete(this);
 	Find find = new Find(this);
+	CartFrame cartFrame = new CartFrame(this);
 	JComboBox comboBox;
 	private JTextField filterField;
 	SendDemo send = new SendDemo();
@@ -327,15 +328,27 @@ public class MainFrame extends JFrame {
 
 		table.setComponentPopupMenu(popup);
 		
-		/*JLabel lblChartIcon = new JLabel("New label");
+		JLabel lblChartIcon = new JLabel("");
 		
-		lblChartIcon.setIcon(new ImageIcon("..\\\\safato-cli-bc247b13f1e8\\images\\64_64_empty-cart-dark.png"));
-		lblChartIcon.setBounds(546, 28, 57, 39);
+		lblChartIcon.setIcon(new ImageIcon("C:\\\\Users\\metas\\Documents\\GitHub\\cli\\img\\cartIcon.png"));
+		lblChartIcon.setBounds(568, 41, 35, 24);
 		contentPane.add(lblChartIcon);
 		
 		lblChartSize = new JLabel("N");
-		lblChartSize.setBounds(567, 40, 35, 10);
-		contentPane.add(lblChartSize);*/
+		lblChartSize.setBounds(580, 38, 35, 10);
+		contentPane.add(lblChartSize);
+		
+		//CartFrameOpen
+		lblChartIcon.addMouseListener(new MouseAdapter()  
+		{  
+		    public void mouseClicked(MouseEvent e)  
+		    {  
+		    	
+		    	cartFrame.setLocationRelativeTo(null);
+		    	cartFrame.setVisible(true);
+		    }  
+		}); 
+		
 
 		// Right Click PopUp Menu-- Start
 		table.addMouseListener(new MouseAdapter() {

@@ -161,6 +161,36 @@ public class Start extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	static void showCart(String sql, DefaultTableModel deteme) {
+		Vector rows = new Vector();
+		Vector header = new Vector();
+		Vector tmp;
+
+		rows.clear();
+		header.clear();
+
+		try {
+			ResultSet rs = stmt.executeQuery(sql);
+			ResultSetMetaData rsMetaData = rs.getMetaData();
+			for (int i = 1; i <= rsMetaData.getColumnCount(); i++)
+				header.addElement(rsMetaData.getColumnName(i));
+
+			while (rs.next()) {
+				tmp = new Vector();
+				for (int i = 1; i <= rsMetaData.getColumnCount(); i++) {
+					tmp.addElement(rs.getObject(i));
+				}
+				// System.out.println(tmp.toString());
+				rows.add(tmp);
+			}
+			deteme.setDataVector(rows, header);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 
 	static void sqlToExcel(String sql, String filename) throws SQLException,
 			FileNotFoundException, IOException {
