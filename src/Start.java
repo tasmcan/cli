@@ -290,6 +290,9 @@ public class Start extends JFrame {
 		}
 
 	}
+	public static void msgbox(String s){
+		   JOptionPane.showMessageDialog(null, s);
+		}
 	
 	
 	public void showConnectionLostDialog(){

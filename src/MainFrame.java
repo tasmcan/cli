@@ -62,6 +62,7 @@ public class MainFrame extends JFrame {
 	public ArrayList<Integer> demoChartArList = new ArrayList<Integer>();
 	JLabel lblChartSize ;
 	int rowNumber;
+	String sqlChart ="";
 
 	/**
 	 * Create the frame.
@@ -330,7 +331,7 @@ public class MainFrame extends JFrame {
 		
 		JLabel lblChartIcon = new JLabel("");
 		
-		lblChartIcon.setIcon(new ImageIcon("C:\\\\Users\\metas\\Documents\\GitHub\\cli\\img\\cartIcon.png"));
+		lblChartIcon.setIcon(new ImageIcon("C:\\Users\\metas\\Documents\\GitHub\\cli\\img\\cartIcon.png"));
 		lblChartIcon.setBounds(568, 41, 35, 24);
 		contentPane.add(lblChartIcon);
 		
@@ -343,7 +344,21 @@ public class MainFrame extends JFrame {
 		{  
 		    public void mouseClicked(MouseEvent e)  
 		    {  
+		    	sqlChart="select * from inventory where 1 and ";
+		    	for(int i=0;i<demoChartArList.size();i++)
+		    	{
+		    		if(i==0)
+		    		{
+		    			sqlChart += "id="+demoChartArList.get(i);
+		    		}
+		    		else
+		    		{ 
+		    			sqlChart += " or id="+demoChartArList.get(i);	
+		    		}
 		    	
+		    	}
+		    	System.out.println(sqlChart);
+		    	Start.showTable(sqlChart, cartFrame.dtm);
 		    	cartFrame.setLocationRelativeTo(null);
 		    	cartFrame.setVisible(true);
 		    }  
@@ -517,10 +532,23 @@ public class MainFrame extends JFrame {
 							.toString());
 					int dbLocalId = (int) table.getModel().getValueAt(rowNumber, 0);
 					
-					demoChartArList.add(dbLocalId);
-					lblChartSize.setText(demoChartArList.size()+"");
+					if(demoChartArList.contains(dbLocalId))
+					{
+						Start.msgbox("It's aleardy added to cart!");
+						lblChartSize.setText(demoChartArList.size()+"");
+						
+						System.out.println("Error!! "+((JMenuItem) e.getSource()).getText().toString()+" Contains "+dbLocalId);
+					}
+					else{
+						demoChartArList.add(dbLocalId);
+						lblChartSize.setText(demoChartArList.size()+"");
+						
+						System.out.println(((JMenuItem) e.getSource()).getText().toString()+" Added "+dbLocalId);
+						
+					}
+				
 					
-					System.out.println(((JMenuItem) e.getSource()).getText().toString()+" test "+dbLocalId);
+					
 				}
 			});
 
