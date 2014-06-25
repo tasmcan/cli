@@ -1,45 +1,57 @@
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.JComboBox;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JButton;
-
 import java.awt.Point;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.sql.Connection;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Vector;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+
+import com.zfqjava.swing.JTableReadTableModelTask;
 
 public class MainFrame extends JFrame {
 
+	Vector header = new Vector();
+	Vector data = new Vector();
 	private JPanel contentPane;
 	private JTable table;
 	Start login;
@@ -48,6 +60,7 @@ public class MainFrame extends JFrame {
 	Delete delete = new Delete(this);
 	Find find = new Find(this);
 	CartFrame cartFrame = new CartFrame(this);
+	ImportDemoFrame demoFrame = new ImportDemoFrame(this);
 	JComboBox comboBox;
 	private JTextField filterField;
 	SendDemo send = new SendDemo();
@@ -60,9 +73,9 @@ public class MainFrame extends JFrame {
 	int selectedId = -1;
 	String selectedPID;
 	public ArrayList<Integer> demoChartArList = new ArrayList<Integer>();
-	JLabel lblChartSize ;
+	JLabel lblChartSize;
 	int rowNumber;
-	String sqlChart ="";
+	String sqlChart = "";
 
 	/**
 	 * Create the frame.
@@ -204,9 +217,9 @@ public class MainFrame extends JFrame {
 
 				switch (comboBox.getSelectedIndex()) {
 				case 0: // show default display table
-					sql = "select * from (select c.name AS Category, p.p_code AS Product, p.description AS Description, count(i.p_id) AS Total, sum(case when i.availability = 1 then 1 else 0 end) AS Lab, sum(case when i.availability = 0 then 1 else 0 end) as Demo " +
-							"from inventory i, product p, category c " +
-							"where c.id = p.c_id AND p.id = i.p_id group by i.p_id) temp order by temp.Category";
+					sql = "select * from (select c.name AS Category, p.p_code AS Product, p.description AS Description, count(i.p_id) AS Total, sum(case when i.availability = 1 then 1 else 0 end) AS Lab, sum(case when i.availability = 0 then 1 else 0 end) as Demo "
+							+ "from inventory i, product p, category c "
+							+ "where c.id = p.c_id AND p.id = i.p_id group by i.p_id) temp order by temp.Category";
 					excelSql = sql;
 
 					excelFile = "general_lab_inventory_"
@@ -214,18 +227,18 @@ public class MainFrame extends JFrame {
 					Start.showTable(sql, dtm);
 					break;
 				case 1: // show items in the lab at the moment
-					sql = "select * from (select i.id AS ID, c.name AS Category, p.p_code AS Product, i.sn AS SN, t.name AS Type, i.notes AS Notes, l.loc_code AS Location " +
-							"from inventory i, product p, category c, location l, inventory_type t " +
-							"where c.id = p.c_id AND i.type = t.id AND p.id = i.p_id AND i.location = l.id AND i.availability=1) temp order by temp.Category";
+					sql = "select * from (select i.id AS ID, c.name AS Category, p.p_code AS Product, i.sn AS SN, t.name AS Type, i.notes AS Notes, l.loc_code AS Location "
+							+ "from inventory i, product p, category c, location l, inventory_type t "
+							+ "where c.id = p.c_id AND i.type = t.id AND p.id = i.p_id AND i.location = l.id AND i.availability=1) temp order by temp.Category";
 					excelSql = sql;
 					excelFile = "items_at_lab_" + dateFormat.format(date)
 							+ ".xls";
 					Start.showTable(sql, dtm);
 					break;
 				case 2: // show items at demo
-					sql = "select * from (select i.id, p.p_code AS Product, i.sn AS SN, t.name AS Type,  m.sender AS Sender, m.receiver AS Receiver, m.organization AS Organization, m.senddate AS 'Send Date', m.promiseddate AS 'Expire Date' " +
-							"from movement m, inventory i, product p, category c, inventory_type t " +
-							"where c.id = p.c_id AND i.type = t.id AND p.id=i.p_id AND m.i_id = i.id AND m.io = 0) temp order by temp.Product";
+					sql = "select * from (select i.id, p.p_code AS Product, i.sn AS SN, t.name AS Type,  m.sender AS Sender, m.receiver AS Receiver, m.organization AS Organization, m.senddate AS 'Send Date', m.promiseddate AS 'Expire Date' "
+							+ "from movement m, inventory i, product p, category c, inventory_type t "
+							+ "where c.id = p.c_id AND i.type = t.id AND p.id=i.p_id AND m.i_id = i.id AND m.io = 0) temp order by temp.Product";
 					excelSql = sql;
 					excelFile = "items_at_demo_" + dateFormat.format(date)
 							+ ".xls";
@@ -241,25 +254,24 @@ public class MainFrame extends JFrame {
 					Start.showTable(sql, dtm);
 					break;
 				case 4: // show full inventory
-					sql = "select * from (select i.id, c.name AS Category, p.p_code AS Product, i.sn AS SN, t.name AS Type, i.availability AS Available, i.notes AS Notes " +
-							"from inventory i, product p, category c, inventory_type t " +
-							"where c.id = p.c_id AND p.id = i.p_id AND i.type = t.id) temp order by temp.Category";
+					sql = "select * from (select i.id, c.name AS Category, p.p_code AS Product, i.sn AS SN, t.name AS Type, i.availability AS Available, i.notes AS Notes "
+							+ "from inventory i, product p, category c, inventory_type t "
+							+ "where c.id = p.c_id AND p.id = i.p_id AND i.type = t.id) temp order by temp.Category";
 					excelSql = sql;
 					excelFile = "full_inventory_data_"
 							+ dateFormat.format(date) + ".xls";
 					Start.showTable(sql, dtm);
 					break;
-				/*case 5:
-					sql = "";
-					excelSql = sql;
-					excelFile = "deleted_returned_items_" + dateFormat.format(date) + ".xls";
-					Start.showTable(sql, dtm);
-					break;*/
+				/*
+				 * case 5: sql = ""; excelSql = sql; excelFile =
+				 * "deleted_returned_items_" + dateFormat.format(date) + ".xls";
+				 * Start.showTable(sql, dtm); break;
+				 */
 				}
 			}
 		});
 		comboBox.setModel(new DefaultComboBoxModel(new String[] { "Default",
-				"At lab", "At demo", "Expired demo", "Full inventory"}));
+				"At lab", "At demo", "Expired demo", "Full inventory" }));
 		comboBox.setBounds(124, 36, 126, 24);
 		contentPane.add(comboBox);
 
@@ -291,20 +303,18 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
-		
+
 		filterField.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				filterField.setText("");
 			}
 		});
-		
+
 		filterField.setBounds(672, 36, 162, 24);
 		contentPane.add(filterField);
 		filterField.setColumns(10);
 
-		
-	
 		// Extract as a Excel File -- current-date-and-time.xls
 		JButton btnToExcel = new JButton("To Excel");
 		btnToExcel.addActionListener(new ActionListener() {
@@ -323,47 +333,134 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
-		
+
 		btnToExcel.setBounds(262, 36, 117, 24);
 		contentPane.add(btnToExcel);
 
 		table.setComponentPopupMenu(popup);
-		
+
 		JLabel lblChartIcon = new JLabel("");
-		
-		lblChartIcon.setIcon(new ImageIcon("C:\\Users\\metas\\Documents\\GitHub\\cli\\img\\cartIcon.png"));
+
+		lblChartIcon.setIcon(new ImageIcon(
+				"C:\\Users\\metas\\Documents\\GitHub\\cli\\img\\cartIcon.png"));
 		lblChartIcon.setBounds(568, 41, 35, 24);
 		contentPane.add(lblChartIcon);
-		
+
 		lblChartSize = new JLabel("N");
 		lblChartSize.setBounds(580, 38, 35, 10);
 		contentPane.add(lblChartSize);
-		
-		//CartFrameOpen
-		lblChartIcon.addMouseListener(new MouseAdapter()  
-		{  
-		    public void mouseClicked(MouseEvent e)  
-		    {  
-		    	sqlChart="select * from inventory where 1 and ";
-		    	for(int i=0;i<demoChartArList.size();i++)
-		    	{
-		    		if(i==0)
-		    		{
-		    			sqlChart += "id="+demoChartArList.get(i);
-		    		}
-		    		else
-		    		{ 
-		    			sqlChart += " or id="+demoChartArList.get(i);	
-		    		}
-		    	
-		    	}
-		    	System.out.println(sqlChart);
-		    	Start.showTable(sqlChart, cartFrame.dtm);
-		    	cartFrame.setLocationRelativeTo(null);
-		    	cartFrame.setVisible(true);
-		    }  
-		}); 
-		
+
+		JButton btnImportExcel = new JButton("Import Excel");
+		btnImportExcel.setBounds(380, 36, 117, 24);
+		contentPane.add(btnImportExcel);
+		btnImportExcel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				final JFileChooser fc = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(
+						"Excel Files", "xls", "xlsx");
+				fc.setFileFilter(filter);
+
+				int returnVal = fc.showOpenDialog(MainFrame.this);
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File choosenFile = fc.getSelectedFile();
+					String filepath = choosenFile.getAbsoluteFile().toString();
+					// This is where a real application would open the file.
+					System.out.println("Opening: " + filepath + ".");
+
+//					try {
+//
+//						FileInputStream file = new FileInputStream(new File(
+//								filepath));
+//
+//						// Get the workbook instance for XLS file
+//						HSSFWorkbook workbook = new HSSFWorkbook(file);
+//
+//						// Get first sheet from the workbook
+//						HSSFSheet sheet = workbook.getSheetAt(0);
+//
+//						HSSFRow rows;
+//						// Iterate through each rows from first sheet
+//						Iterator<Row> rowIterator = sheet.iterator();
+//						while (rowIterator.hasNext()) {
+//							rows = (HSSFRow) rowIterator.next();
+//							// For each row, iterate through each columns
+//							Iterator<Cell> cellIterator = rows.cellIterator();
+//							while (cellIterator.hasNext()) {
+//
+//								Cell cell = cellIterator.next();
+//
+//								switch (cell.getCellType()) {
+//								case Cell.CELL_TYPE_BOOLEAN:
+//									System.out.print(cell.getBooleanCellValue()
+//											+ "\t\t");
+//
+//									break;
+//								case Cell.CELL_TYPE_NUMERIC:
+//									System.out.print(cell.getNumericCellValue()
+//											+ "\t\t");
+//
+//									break;
+//								case Cell.CELL_TYPE_STRING:
+//									System.out.print(cell.getStringCellValue()
+//											+ "\t\t");
+//
+//									break;
+//								}
+//							}
+//							System.out.println("");
+//						}
+//
+//						file.close();
+//						FileOutputStream out = new FileOutputStream(new File(
+//								filepath));
+//						workbook.write(out);
+//						out.close();
+//
+//					} catch (FileNotFoundException e) {
+//						System.out.println("File not fount");
+//						e.printStackTrace();
+//					} catch (IOException e) {
+//						System.out.println("Different File extension");
+//						e.printStackTrace();
+//					}
+					
+//					String excelFileName = filepath;
+//					 File files = new File(excelFileName );
+//					 JProgressBar progressBar = new JProgressBar(); 
+//					 JTableReadTableModelTask task = new JTableReadTableModelTask(files, null, progressBar, demoFrame.table);
+//					 task.execute();
+					
+					 demoFrame.setVisible(true);
+					
+				} else {
+					System.out.println("Open command cancelled by user.");
+				}
+
+				
+
+			}
+		});
+
+		// CartFrameOpen
+		lblChartIcon.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				sqlChart = "select * from inventory where 1 and ";
+				for (int i = 0; i < demoChartArList.size(); i++) {
+					if (i == 0) {
+						sqlChart += "id=" + demoChartArList.get(i);
+					} else {
+						sqlChart += " or id=" + demoChartArList.get(i);
+					}
+
+				}
+				System.out.println(sqlChart);
+				Start.showTable(sqlChart, cartFrame.dtm);
+				cartFrame.setLocationRelativeTo(null);
+				cartFrame.setVisible(true);
+			}
+		});
 
 		// Right Click PopUp Menu-- Start
 		table.addMouseListener(new MouseAdapter() {
@@ -426,9 +523,7 @@ public class MainFrame extends JFrame {
 		}
 	}
 
-
 	public void showPopUp(MouseEvent e) {
-		
 
 		// Right mouse click
 		if (e.isPopupTrigger()) {
@@ -451,7 +546,7 @@ public class MainFrame extends JFrame {
 				selectedPID = (String) table.getModel()
 						.getValueAt(rowNumber, 1);
 				System.out.println("" + selectedPID);
-				//JOptionPane.showMessageDialog(null, "" + selectedPID);
+				// JOptionPane.showMessageDialog(null, "" + selectedPID);
 			} else {
 				selectedId = (int) table.getModel().getValueAt(rowNumber, 0);
 				System.out.println("" + selectedId);
@@ -530,34 +625,41 @@ public class MainFrame extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					System.out.println(((JMenuItem) e.getSource()).getText()
 							.toString());
-					int dbLocalId = (int) table.getModel().getValueAt(rowNumber, 0);
-					
-					if(demoChartArList.contains(dbLocalId))
-					{
+					int dbLocalId = (int) table.getModel().getValueAt(
+							rowNumber, 0);
+					String dbInventoryType = table.getModel()
+							.getValueAt(rowNumber, 0).toString();
+
+					// Check to item exist in cart
+					if (demoChartArList.contains(dbLocalId)) {
 						Start.msgbox("It's aleardy added to cart!");
-						lblChartSize.setText(demoChartArList.size()+"");
-						
-						System.out.println("Error!! "+((JMenuItem) e.getSource()).getText().toString()+" Contains "+dbLocalId);
+						lblChartSize.setText(demoChartArList.size() + "");
+
+						System.out.println("Error!! "
+								+ ((JMenuItem) e.getSource()).getText()
+										.toString() + " Contains " + dbLocalId);
+					} else {
+						if (dbInventoryType
+								.equalsIgnoreCase("Normal Inventory")) {
+							demoChartArList.add(dbLocalId);
+							lblChartSize.setText(demoChartArList.size() + "");
+
+							System.out.println(((JMenuItem) e.getSource())
+									.getText().toString()
+									+ " Added "
+									+ dbLocalId);
+						}
 					}
-					else{
-						demoChartArList.add(dbLocalId);
-						lblChartSize.setText(demoChartArList.size()+"");
-						
-						System.out.println(((JMenuItem) e.getSource()).getText().toString()+" Added "+dbLocalId);
-						
-					}
-				
-					
-					
+
 				}
 			});
 
 			switch (comboBox.getSelectedIndex()) {
 			case 0: // show default display table
-				//popup.add(deleteMenu);
-				//popup.add(editMenu);
-				//popup.add(sendMenu);
-				//popup.add(addToDemoMenu);
+				// popup.add(deleteMenu);
+				// popup.add(editMenu);
+				// popup.add(sendMenu);
+				// popup.add(addToDemoMenu);
 				break;
 			case 1: // show at lab
 				popup.add(deleteMenu);
@@ -578,10 +680,10 @@ public class MainFrame extends JFrame {
 			case 4: // show full inventory
 				popup.add(deleteMenu);
 				popup.add(editMenu);
-				//popup.add(editMenu).setEnabled(false);
+				// popup.add(editMenu).setEnabled(false);
 				break;
 			}
-			
+
 			popup.show(e.getComponent(), e.getX(), e.getY());
 
 		}
