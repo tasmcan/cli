@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JMenuItem;
@@ -47,7 +48,7 @@ public class MainFrame extends JFrame {
 	Add addnew = new Add(this);
 	Delete delete = new Delete(this);
 	Find find = new Find(this);
-	CartFrame cartFrame = new CartFrame(this);
+	CartFrame cartFrame;
 	JComboBox comboBox;
 	private JTextField filterField;
 	SendDemo send = new SendDemo();
@@ -59,7 +60,7 @@ public class MainFrame extends JFrame {
 	String excelFile;
 	int selectedId = -1;
 	String selectedPID;
-	public ArrayList<Integer> demoChartArList = new ArrayList<Integer>();
+	public static ArrayList<Integer> demoChartArList = new ArrayList<Integer>();
 	JLabel lblChartSize ;
 	int rowNumber;
 	String sqlChart ="";
@@ -344,7 +345,7 @@ public class MainFrame extends JFrame {
 		{  
 		    public void mouseClicked(MouseEvent e)  
 		    {  
-		    	sqlChart="select * from inventory where 1 and ";
+		    	sqlChart="select * from inventory where ";
 		    	for(int i=0;i<demoChartArList.size();i++)
 		    	{
 		    		if(i==0)
@@ -355,10 +356,13 @@ public class MainFrame extends JFrame {
 		    		{ 
 		    			sqlChart += " or id="+demoChartArList.get(i);	
 		    		}
+		    		//sqlChart += "SORT BY id ASC";
 		    	
 		    	}
+		    	cartFrame = new CartFrame(MainFrame.this);
 		    	System.out.println(sqlChart);
-		    	Start.showTable(sqlChart, cartFrame.dtm);
+		    	cartFrame.chartSize = demoChartArList.size();
+		    	Start.showCart(sqlChart, cartFrame.dtm);
 		    	cartFrame.setLocationRelativeTo(null);
 		    	cartFrame.setVisible(true);
 		    }  
