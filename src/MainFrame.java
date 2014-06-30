@@ -16,6 +16,8 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Vector;
@@ -72,7 +74,7 @@ public class MainFrame extends JFrame {
 	int selectedId = -1;
 	String selectedPID;
 	public static ArrayList<Integer> demoChartArList = new ArrayList<Integer>();
-	JLabel lblChartSize ;
+	static JLabel lblChartSize ;
 	int rowNumber;
 	String sqlChart = "";
 
@@ -354,7 +356,7 @@ public class MainFrame extends JFrame {
 		{  
 		    public void mouseClicked(MouseEvent e)  
 		    {  
-		    	sqlChart="select * from inventory where ";
+		    	sqlChart="select id, sn, type from inventory where ";
 		    	for(int i=0;i<demoChartArList.size();i++)
 		    	{
 		    		if(i==0)
@@ -365,10 +367,12 @@ public class MainFrame extends JFrame {
 		    		{ 
 		    			sqlChart += " or id="+demoChartArList.get(i);	
 		    		}
-		    		//sqlChart += "SORT BY id ASC";
-		    	
+	
 		    	}
+		    	sqlChart += " ORDER BY id ASC";
+		   
 		    	cartFrame = new CartFrame(MainFrame.this);
+		    	Collections.sort(demoChartArList);
 		    	System.out.println(sqlChart);
 		    	cartFrame.chartSize = demoChartArList.size();
 		    	Start.showCart(sqlChart, cartFrame.dtm);
@@ -648,8 +652,6 @@ public class MainFrame extends JFrame {
 								+ ((JMenuItem) e.getSource()).getText()
 										.toString() + " Contains " + dbLocalId);
 					} else {
-						if (dbInventoryType
-								.equalsIgnoreCase("Normal Inventory")) {
 							demoChartArList.add(dbLocalId);
 							lblChartSize.setText(demoChartArList.size() + "");
 
@@ -657,7 +659,6 @@ public class MainFrame extends JFrame {
 									.getText().toString()
 									+ " Added "
 									+ dbLocalId);
-						}
 					}
 
 				}

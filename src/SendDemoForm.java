@@ -149,6 +149,11 @@ public class SendDemoForm extends JFrame {
 						statement2.executeBatch();
 						
 						Start.msgbox("Demo is sent successfully!");
+						MainFrame.demoChartArList.clear();
+						MainFrame.lblChartSize.setText("0");
+						cartF.checkboxList.clear();
+						
+						dispose();
 					} catch (SQLException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
